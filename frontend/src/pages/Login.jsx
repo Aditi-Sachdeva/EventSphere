@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
 
-export default function LoginPage() {
+export default function Login() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -9,6 +12,7 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,26 +27,41 @@ export default function LoginPage() {
 
     try {
       setLoading(true);
+
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         formData
       );
 
-      setMessage(res.data.msg || "Login successful");
-
+      // ✅ Store JWT Token
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
       }
 
-      setLoading(false);
+      // ✅ Store User Info
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
+
+      setIsError(false);
+      setMessage(res.data.msg || "Login successful 🎉");
+
+      // ✅ Redirect to dashboard
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+
     } catch (err) {
-      setLoading(false);
+      setIsError(true);
       setMessage(err.response?.data?.msg || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen relative flex flex-col bg-[#f6f7fb] overflow-hidden">
+
       {/* ambient background */}
       <div className="absolute -top-32 -left-32 w-[26rem] h-[26rem] bg-indigo-300 rounded-full blur-[120px] opacity-40" />
       <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-pink-300 rounded-full blur-[120px] opacity-40" />
@@ -50,6 +69,7 @@ export default function LoginPage() {
       {/* ================= NAVBAR ================= */}
       <nav className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center">
+
           {/* Left */}
           <div className="flex-1 flex items-center gap-3">
             <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold shadow-md">
@@ -70,9 +90,12 @@ export default function LoginPage() {
 
           {/* Right */}
           <div className="flex-1 flex justify-end">
-            <button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-2 rounded-2xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.04] active:scale-95 transition">
+            <Link
+              to="/signup"
+              className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-2 rounded-2xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.04] active:scale-95 transition"
+            >
               Register
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -111,13 +134,20 @@ export default function LoginPage() {
 
           {/* RIGHT FORM */}
           <div className="flex justify-center">
-            <div className="w-full max-w-md bg-white/85 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-10 transition">
+            <div className="w-full max-w-md bg-white/85 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-10">
+
               <h2 className="text-2xl font-semibold text-gray-800 text-center">
                 Login to Account
               </h2>
 
               {message && (
-                <div className="mt-4 text-center text-sm text-red-500">
+                <div
+                  className={`mt-4 text-center text-sm px-4 py-2 rounded-xl ${
+                    isError
+                      ? "bg-red-50 text-red-600 border border-red-200"
+                      : "bg-green-50 text-green-600 border border-green-200"
+                  }`}
+                >
                   {message}
                 </div>
               )}
@@ -150,10 +180,14 @@ export default function LoginPage() {
 
               <p className="text-sm text-gray-500 text-center mt-7">
                 Don’t have an account?{" "}
-                <span className="text-indigo-600 font-medium cursor-pointer hover:underline">
+                <Link
+                  to="/signup"
+                  className="text-indigo-600 font-medium hover:underline"
+                >
                   Sign Up
-                </span>
+                </Link>
               </p>
+
             </div>
           </div>
         </div>
@@ -170,8 +204,7 @@ function FloatingInput({ label, ...props }) {
         {...props}
         placeholder=" "
         required
-        className="peer w-full rounded-xl border border-gray-300 bg-white px-4 pt-5 pb-2 text-gray-800
-        focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition"
+        className="peer w-full rounded-xl border border-gray-300 bg-white px-4 pt-5 pb-2 text-gray-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition"
       />
       <label
         className="absolute left-4 top-2 text-sm text-gray-500 transition-all

@@ -135,7 +135,7 @@ async function handleChangeUserRole(req, res) {
             return res.status(400).json({ msg: "Invalid role" });
         }
 
-        const user = await User.findById(userId).select("-password");;
+        const user = await User.findById(userId).select("-password");
         if (!user) {
             return res.status(404).json({ msg: "User does not exist" });
         }
@@ -201,8 +201,13 @@ async function handleReactivateClub(req, res) {
             return res.status(404).json({ msg: "Club not found" });
         }
 
+        if (club.isActive) {
+            return res.status(400).json({ msg: "Club already active" });
+        }
+
         club.isActive = true;
         await club.save();
+        
 
         return res.status(200).json({ msg: "Club reactivated", club });
 

@@ -1,13 +1,25 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 function App() {
-
   return (
-    <>
-    <div>
-      <h1 className="text-4xl bg-pink-200"> Aditi Sachdeva</h1>
-    </div>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <div className="min-h-screen flex items-center justify-center text-4xl font-bold">
+            Dashboard 🎉
+          </div>
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

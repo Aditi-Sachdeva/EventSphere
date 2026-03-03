@@ -76,7 +76,7 @@ async function handleAddOrganizer(req, res) {
         }
 
         if (club.organizers.some(id => id.equals(user._id))) {
-            return res.status(400).json({ msg: "Already an orgainzer" });
+            return res.status(400).json({ msg: "Already an organizer" });
         }
 
         if (user.role === "user") {
@@ -216,7 +216,6 @@ async function handleReactivateClub(req, res) {
         return res.status(500).json({ msg: "Server Error" });
     }
 }
-
 
 module.exports = {
     handleCreateClub,

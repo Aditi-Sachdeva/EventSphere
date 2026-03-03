@@ -43,7 +43,6 @@ async function handleJoinClub(req, res) {
 }
 
 
-
 async function handleApproveMember(req, res) {
     try {
         const { clubId, userId } = req.body;

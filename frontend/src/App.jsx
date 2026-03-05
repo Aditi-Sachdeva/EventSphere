@@ -27,9 +27,11 @@
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
+
 // import Home from "./pages/Home";
 // import Login from "./pages/Login";
 // import SignUp from "./pages/SignUp";
+
 
 
 import AdminDashboard from "./pages/admin/adminDashboard";
@@ -39,12 +41,22 @@ import ViewClubs from "./pages/admin/ViewClubs";
 import ViewEvents from "./pages/admin/ViewEvents";
 
 
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+
+
 function App() {
   return (
     <Routes>
 
+
    
 
+
+      <Route path="/" element={<Home />} />   {/* 👈 CHANGE HERE */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
 
       {/* Redirect root to admin users */}
       <Route path="/" element={<Navigate to="/admin/users" />} />

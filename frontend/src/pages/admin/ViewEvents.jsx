@@ -1,7 +1,3 @@
-
-
-
-
 import { useState, useMemo } from "react";
 import {
   Search, X, Eye, CheckCircle2, XCircle, Clock, Calendar,
@@ -550,4 +546,3 @@ export default function ViewEvents() {
     </div>
   );
 }
-

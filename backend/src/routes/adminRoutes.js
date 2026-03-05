@@ -15,110 +15,26 @@ const {
 } = require("../controllers/adminController");
 
 const { checkAuth } = require("../middlewares/authMiddleware");
-const roleMiddleware = require("../middlewares/roleMiddleware");
+const { checkRole } = require("../middlewares/roleMiddleware");
 
 
-/*
-====================================
-        CLUB MANAGEMENT
-====================================
-*/
-
-// Create new club
-router.post(
-  "/club/create",
-  checkAuth,
-roleMiddleware.checkRole(["admin"]),
-  handleCreateClub
-);
-
-// Add organizer to club
-router.post(
-  "/club/add-organizer",
-  checkAuth,
-  roleMiddleware.checkRole(["admin"]),
-  handleAddOrganizer
-);
-
-// Get all clubs
-router.get(
-  "/clubs",
-  checkAuth,
-roleMiddleware.checkRole(["admin"]),
-  handleGetAllClubs
-);
-
-// Deactivate club
-router.put(
-  "/club/deactivate/:clubId",
-  checkAuth,
-roleMiddleware.checkRole(["admin"]),
-  handleDeactivateClub
-);
-
-// Reactivate club
-router.put(
-  "/club/reactivate/:clubId",
-  checkAuth,
-  roleMiddleware.checkRole(["admin"]),
-  handleReactivateClub
-);
+// Club management
+router.post("/club/create", checkAuth, checkRole(["admin"]), handleCreateClub);
+router.post("/club/add-organizer", checkAuth, checkRole(["admin"]), handleAddOrganizer);
+router.get("/clubs", checkAuth, checkRole(["admin"]), handleGetAllClubs);
+router.put("/club/deactivate/:clubId", checkAuth, checkRole(["admin"]), handleDeactivateClub);
+router.put("/club/reactivate/:clubId", checkAuth, checkRole(["admin"]), handleReactivateClub);
 
 
-
-/*
-====================================
-        USER MANAGEMENT
-====================================
-*/
-
-// View all users
-router.get(
-  "/users",
-  checkAuth,
- roleMiddleware.checkRole(["admin"]),
-  handleGetAllUsers
-);
-
-// Change user role
-router.put(
-  "/user/role",
-  checkAuth,
- roleMiddleware.checkRole(["admin"]),
-  handleChangeUserRole
-);
+// User management
+router.get("/users", checkAuth, checkRole(["admin"]), handleGetAllUsers);
+router.put("/user/role", checkAuth, checkRole(["admin"]), handleChangeUserRole);
 
 
-
-/*
-====================================
-        EVENT MANAGEMENT
-====================================
-*/
-
-// View all events
-router.get(
-  "/events",
-  checkAuth,
- roleMiddleware.checkRole(["admin"]),
-  handleGetAllEvents
-);
-
-// Approve event
-router.put(
-  "/event/approve/:eventId",
-  checkAuth,
-roleMiddleware.checkRole(["admin"]),
-  handleApproveEvent
-);
-
-// Reject event
-router.put(
-  "/event/reject/:eventId",
-  checkAuth,
- roleMiddleware.checkRole(["admin"]),
-  handleRejectEvent
-);
+// Event management
+router.get("/events", checkAuth, checkRole(["admin"]), handleGetAllEvents);
+router.put("/event/approve/:eventId", checkAuth, checkRole(["admin"]), handleApproveEvent);
+router.put("/event/reject/:eventId", checkAuth, checkRole(["admin"]), handleRejectEvent);
 
 
 module.exports = router;

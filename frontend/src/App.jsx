@@ -25,29 +25,76 @@
 // export default App;
 
 
+// import { Routes, Route, Navigate } from "react-router-dom";
+
+// import AdminDashboard from "./pages/admin/adminDashboard";
+// import ViewUsers from "./pages/admin/ViewUsers";
+// import CreateClub from "./pages/admin/CreateClub";
+// import ViewClubs from "./pages/admin/ViewClubs";
+// import ViewEvents from "./pages/admin/ViewEvents";
+
+// import Home from "./pages/Home";
+// import Login from "./pages/Login";
+// import SignUp from "./pages/SignUp";
+
+
+// function App() {
+//   return (
+//     <Routes>
+
+//       <Route path="/" element={<Home />} />   {/* 👈 CHANGE HERE */}
+//       <Route path="/login" element={<Login />} />
+//       <Route path="/signup" element={<SignUp />} />
+
+
+//       {/* Redirect root to admin users */}
+//       <Route path="/" element={<Navigate to="/admin/users" />} />
+
+//       {/* Admin Layout */}
+//       <Route path="/admin" element={<AdminDashboard />}>
+
+//         {/* View Users Page */}
+//         <Route path="users" element={<ViewUsers />} />
+
+//         {/* Create Club Page */}
+//         <Route path="create-club" element={<CreateClub />} />
+
+
+//         {/* Create Club Page */}
+//         <Route path="view-clubs" element={<ViewClubs />} />
+
+//         <Route path="view-events" element={<ViewEvents />} />
+
+
+
+//       </Route>
+
+//     </Routes>
+//   );
+// }
+
+// export default App;
+
 import { Routes, Route, Navigate } from "react-router-dom";
-<<<<<<< HEAD
+
+// import Home from "./pages/Home";
+// import Login from "./pages/Login";
+// import SignUp from "./pages/SignUp";
+
 
 import AdminDashboard from "./pages/admin/adminDashboard";
 import ViewUsers from "./pages/admin/ViewUsers";
 import CreateClub from "./pages/admin/CreateClub";
 import ViewClubs from "./pages/admin/ViewClubs";
 import ViewEvents from "./pages/admin/ViewEvents";
-=======
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
->>>>>>> 29e5d3608a72940db6bccdefd9f94b013668e1e2
+
 
 function App() {
   return (
     <Routes>
-<<<<<<< HEAD
-=======
-      <Route path="/" element={<Home />} />   {/* 👈 CHANGE HERE */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
->>>>>>> 29e5d3608a72940db6bccdefd9f94b013668e1e2
+
+   
+
 
       {/* Redirect root to admin users */}
       <Route path="/" element={<Navigate to="/admin/users" />} />
@@ -76,4 +123,3 @@ function App() {
 }
 
 export default App;
-

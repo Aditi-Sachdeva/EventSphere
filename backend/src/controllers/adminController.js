@@ -327,4 +327,6 @@ module.exports = {
   handleGetAllEvents,
   handleApproveEvent,
   handleRejectEvent,
+
 };
+

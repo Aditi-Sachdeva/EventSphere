@@ -35,14 +35,11 @@ export default function SignUp() {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/signup",
-        {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }
-      );
+      const res = await axios.post("http://localhost:5000/api/auth/signup", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
 
       setIsError(false);
       setMessage(res.data.msg || "Registration successful 🎉");
@@ -51,7 +48,6 @@ export default function SignUp() {
       setTimeout(() => {
         navigate("/");
       }, 1500);
-
     } catch (err) {
       setIsError(true);
       setMessage(err.response?.data?.msg || "Registration failed");
@@ -61,40 +57,56 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen relative flex flex-col bg-[#f6f7fb] overflow-hidden">
-      
-      {/* Ambient Background */}
-      <div className="absolute -top-32 -left-32 w-[26rem] h-[26rem] bg-indigo-300 rounded-full blur-[120px] opacity-40" />
-      <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-pink-300 rounded-full blur-[120px] opacity-40" />
+    <div className="min-h-screen relative flex flex-col bg-gray-50 overflow-hidden">
+
+      {/* Ambient diagonal gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-200 via-white to-indigo-200 opacity-50" />
 
       {/* ================= NAVBAR ================= */}
-      <nav className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center">
-          
-          <div className="flex-1 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold shadow-md">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
               ES
             </div>
-            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <h1 className="text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
               EventSphere
+            </h1>
+          </div>
+
+          {/* Nav Links */}
+          <div className="hidden md:flex gap-5 font-medium">
+            <Link
+              to="/"
+              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+            >
+              Home
+            </Link>
+            <Link
+              to="/events"
+              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+            >
+              Events
+            </Link>
+            <Link
+              to="/clubs"
+              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+            >
+              Clubs
+            </Link>
+            <span className="px-3 py-1 text-sm bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-md font-semibold shadow-sm">
+              Login
             </span>
           </div>
 
-          <div className="hidden md:flex flex-1 justify-center gap-10 text-sm font-medium text-gray-600">
-            <button className="hover:text-indigo-600 transition">Home</button>
-            <button className="hover:text-indigo-600 transition">Events</button>
-            <button className="hover:text-indigo-600 transition">Clubs</button>
-            <button className="text-indigo-600 font-semibold">Register</button>
-          </div>
-
-          <div className="flex-1 flex justify-end">
-            <Link
-              to="/"
-              className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-2 rounded-2xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.04] active:scale-95 transition"
-            >
-              Login
-            </Link>
-          </div>
+          {/* Register Button */}
+          <Link
+            to="/signup"
+            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
+          >
+            Register
+          </Link>
         </div>
       </nav>
 
@@ -105,14 +117,14 @@ export default function SignUp() {
           {/* LEFT CONTENT */}
           <div className="hidden md:flex justify-center">
             <div className="max-w-xl space-y-7">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-xs font-medium">
-                🚀 Join the Community
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-50 text-pink-600 text-xs font-medium">
+              🤝 Join the Community
               </div>
 
               <h1 className="text-5xl font-bold text-gray-800 leading-tight">
                 Create Your
                 <br />
-                <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
                   EventSphere
                 </span>{" "}
                 Account
@@ -133,26 +145,25 @@ export default function SignUp() {
 
           {/* RIGHT FORM */}
           <div className="flex justify-center">
-            <div className="w-full max-w-md bg-white/85 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-10">
-              
+            <div className="w-full max-w-md bg-white/85 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-10 mt-15">
+
               <h2 className="text-2xl font-semibold text-gray-800 text-center">
                 Create Account
               </h2>
 
               {message && (
                 <div
-                  className={`mt-4 text-center text-sm px-4 py-2 rounded-xl border ${
-                    isError
+                  className={`mt-4 text-center text-sm px-4 py-2 rounded-xl border ${isError
                       ? "bg-red-50 text-red-600 border-red-200"
                       : "bg-green-50 text-green-600 border-green-200"
-                  }`}
+                    }`}
                 >
                   {message}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-                
+
                 <FloatingInput
                   label="Full Name"
                   name="name"
@@ -188,7 +199,7 @@ export default function SignUp() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3 rounded-xl font-medium shadow-md hover:shadow-lg hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-pink-500 to-indigo-600 text-white py-3 rounded-xl font-medium shadow-md hover:shadow-lg hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading ? "Creating account..." : "Sign Up"}
                 </button>
@@ -199,7 +210,7 @@ export default function SignUp() {
                 Already have an account?{" "}
                 <Link
                   to="/"
-                  className="text-indigo-600 font-medium hover:underline"
+                  className="font-medium bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:underline"
                 >
                   Login
                 </Link>
@@ -222,7 +233,7 @@ function FloatingInput({ label, ...props }) {
         placeholder=" "
         required
         className="peer w-full rounded-xl border border-gray-300 bg-white px-4 pt-5 pb-2 text-gray-800
-        focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition"
+        focus:border-pink-500 focus:ring-2 focus:ring-pink-500/40 outline-none transition"
       />
       <label
         className="absolute left-4 top-2 text-sm text-gray-500 transition-all
@@ -231,7 +242,7 @@ function FloatingInput({ label, ...props }) {
         peer-placeholder-shown:text-gray-400
         peer-focus:top-2
         peer-focus:text-sm
-        peer-focus:text-indigo-600"
+        peer-focus:text-pink-600"
       >
         {label}
       </label>
@@ -242,7 +253,7 @@ function FloatingInput({ label, ...props }) {
 function Feature({ text }) {
   return (
     <div className="flex items-center gap-4 text-gray-700">
-      <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-semibold shadow-sm">
+      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-100 to-indigo-100 flex items-center justify-center text-pink-600 font-semibold shadow-sm">
         ✓
       </div>
       <span className="text-base">{text}</span>

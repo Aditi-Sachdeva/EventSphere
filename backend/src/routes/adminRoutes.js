@@ -21,7 +21,12 @@ const { checkRole } = require("../middlewares/roleMiddleware");
 // Club management
 router.post("/club/create", checkAuth, checkRole(["admin"]), handleCreateClub);
 router.post("/club/add-organizer", checkAuth, checkRole(["admin"]), handleAddOrganizer);
-router.get("/clubs", checkAuth, checkRole(["admin"]), handleGetAllClubs);
+
+// router.get("/clubs", checkAuth, checkRole(["admin"]), handleGetAllClubs);
+
+router.get("/clubs",handleGetAllClubs);
+
+
 router.put("/club/deactivate/:clubId", checkAuth, checkRole(["admin"]), handleDeactivateClub);
 router.put("/club/reactivate/:clubId", checkAuth, checkRole(["admin"]), handleReactivateClub);
 

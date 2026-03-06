@@ -28,7 +28,7 @@ export default function Login() {
       setIsError(false);
       setMessage(res.data.msg || "Login successful 🎉");
 
-      setTimeout(() => navigate("/dashboard"), 1000);
+      setTimeout(() => navigate("/mainpage"), 1000);
     } catch (err) {
       setIsError(true);
       setMessage(err.response?.data?.msg || "Login failed");
@@ -41,10 +41,10 @@ export default function Login() {
     <div className="min-h-screen relative flex flex-col bg-gray-50 overflow-hidden">
 
       {/* Ambient gradient background (diagonal pink → indigo) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-pink-200 via-white to-indigo-200 opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-pink-100 opacity-50" />
 
       {/* ================= NAVBAR (same as Home) ================= */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm border-b border-gray-200">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -60,19 +60,19 @@ export default function Login() {
           <div className="hidden md:flex gap-5 font-medium">
             <Link
               to="/"
-              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+              className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Home
             </Link>
             <Link
               to="/events"
-              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+              className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Events
             </Link>
             <Link
               to="/clubs"
-              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+              className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Clubs
             </Link>
@@ -84,12 +84,15 @@ export default function Login() {
           {/* Register Button */}
           <Link
             to="/signup"
-            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
+            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
           >
-            Register
+            Sign Up
           </Link>
         </div>
       </nav>
+
+
+
 
       {/* ================= MAIN ================= */}
       <main className="relative z-10 flex-1 flex items-center justify-center px-6 py-24 mt-[80px]">
@@ -134,8 +137,8 @@ export default function Login() {
               {message && (
                 <div
                   className={`mt-4 text-center text-sm px-4 py-2 rounded-xl ${isError
-                      ? "bg-red-50 text-red-600 border border-red-200"
-                      : "bg-green-50 text-green-600 border border-green-200"
+                    ? "bg-red-50 text-red-600 border border-red-200"
+                    : "bg-green-50 text-green-600 border border-green-200"
                     }`}
                 >
                   {message}

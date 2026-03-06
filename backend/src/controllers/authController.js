@@ -96,9 +96,19 @@ async function handleLogin(req, res) {
 }
 
 
+async function handleLogout(req, res) {
+  try {
+    return res.status(200).json({ msg: "Logout successful" });
+  } catch (error) {
+    return res.status(500).json({ msg: "Server Error" });
+  }
+}
+
+
 module.exports = {
     handleSignup,
-    handleLogin
+    handleLogin,
+    handleLogout,
 }
 
 

@@ -29,7 +29,7 @@ const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800">
 
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm border-b border-gray-200">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -52,37 +52,37 @@ const Home = () => {
 
             <Link
               to="/events"
-              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+              className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Events
             </Link>
 
             <Link
               to="/clubs"
-              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+              className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Clubs
             </Link>
 
             <Link
               to="/login"
-              className="px-3 py-1 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-indigo-600 hover:text-white rounded-md transition"
+              className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Login
             </Link>
+
+
           </div>
 
           {/* Register Button */}
           <Link
             to="/signup"
-            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
+            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
           >
-            Register
+            Sign Up
           </Link>
         </div>
       </nav>
-
-
 
 
       {/* ================= HERO ================= */}
@@ -230,10 +230,8 @@ const Home = () => {
       </section>
 
 
-
-
       {/* ================= FOOTER ================= */}
-      <footer className="mt-20 bg-gray-200/40">
+      <footer className="mt-20 bg-gray-100 border-t border-gray-300 shadow-inner">
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
@@ -277,7 +275,7 @@ const Home = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="bg-gray-200/40">
+        <div className="bg-gray-200 border-t border-gray-300">
           <div className="max-w-6xl mx-auto px-6 py-6 text-center text-sm text-gray-800 tracking-wide">
             <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent font-semibold">
               © 2026 EventSphere
@@ -285,8 +283,6 @@ const Home = () => {
           </div>
         </div>
       </footer>
-
-
 
 
     </div>

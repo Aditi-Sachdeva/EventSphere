@@ -314,7 +314,23 @@ async function handleRejectEvent(req, res) {
     return res.status(500).json({ msg: "Server Error" });
   }
 }
+const handleDeleteUser = async (req, res) => {
+  try {
 
+    const { id } = req.params;
+
+    await User.findByIdAndDelete(id);
+
+    res.json({
+      msg: "User deleted successfully"
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      msg: "Delete failed"
+    });
+  }
+};
 
 module.exports = {
   handleCreateClub,
@@ -327,6 +343,7 @@ module.exports = {
   handleGetAllEvents,
   handleApproveEvent,
   handleRejectEvent,
+  handleDeleteUser,
 
 };
 

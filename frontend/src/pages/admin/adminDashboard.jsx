@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import API from "../../api/api";
 import { Link } from "react-router-dom";
+import axios from "axios"; 
 
 import ViewUsers from "./ViewUsers";
 import CreateClub from "./CreateClub";
@@ -31,9 +31,19 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const usersRes = await API.get("/admin/users");
-      const clubsRes = await API.get("/admin/clubs");
-      const eventsRes = await API.get("/admin/events");
+      const token = localStorage.getItem("token"); 
+
+      const usersRes = await axios.get("http://localhost:5000/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const clubsRes = await axios.get("http://localhost:5000/api/admin/clubs", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const eventsRes = await axios.get("http://localhost:5000/api/admin/events", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setStats({
         users: usersRes.data.users.length,
@@ -44,7 +54,7 @@ export default function AdminDashboard() {
       setEvents(eventsRes.data.events.slice(0, 5));
       setClubs(clubsRes.data.clubs.slice(0, 4));
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching dashboard data:", err);
     }
   };
 
@@ -62,7 +72,6 @@ export default function AdminDashboard() {
             ☰
           </button>
 
-          {/* ES logo clickable */}
           <Link to="/mainpage">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-md cursor-pointer"
@@ -72,7 +81,6 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
-          {/* EventSphere text clickable */}
           <Link to="/mainpage">
             <h1 className="text-lg font-bold cursor-pointer">
               Event
@@ -89,7 +97,7 @@ export default function AdminDashboard() {
           </Link>
         </div>
 
-        {/* Right side user box */}
+
         <div className="flex items-center gap-2 pl-3 border-l border-gray-200 mr-16">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
@@ -143,7 +151,6 @@ export default function AdminDashboard() {
   );
 }
 
-// Dashboard component (your provided code)
 function Dashboard({ stats, events, clubs }) {
   const STAT_CARDS = [
     { label: "Total Users", value: stats.users, icon: "👥", bg: "bg-indigo-50", text: "text-indigo-500", bar: "bg-indigo-500" },
@@ -157,7 +164,7 @@ function Dashboard({ stats, events, clubs }) {
 
   return (
     <div className="p-6">
-      {/* Header */}
+
       <div className="flex items-end justify-between mb-6">
         <div>
           <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-indigo-500 bg-indigo-50 border border-indigo-200 rounded-full px-2.5 py-1 mb-2">
@@ -167,7 +174,6 @@ function Dashboard({ stats, events, clubs }) {
         </div>
       </div>
 
-      {/* Stat Cards */}
       <div className="grid grid-cols-3 gap-3.5 mb-4">
         {STAT_CARDS.map(s => (
           <div key={s.label} className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all">
@@ -180,7 +186,6 @@ function Dashboard({ stats, events, clubs }) {
         ))}
       </div>
 
-      {/* Bottom Grid */}
       <div className="grid grid-cols-3 gap-3.5">
         {/* Recent Events */}
         <div className="col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -263,7 +268,7 @@ function Dashboard({ stats, events, clubs }) {
             )}
           </div>
 
-          {/* Real stats footer */}
+          {/* Stats footer */}
           <div className="mx-3.5 mb-3.5 rounded-2xl overflow-hidden">
             <div className="p-3.5 grid grid-cols-2 gap-2" style={{ background: GRAD }}>
               <div className="bg-white/20 rounded-xl py-2 text-center">

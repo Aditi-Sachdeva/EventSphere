@@ -42,7 +42,7 @@ export default function SignUp() {
       });
 
       setIsError(false);
-      setMessage(res.data.msg || "Registration successful 🎉");
+      setMessage(res.data.msg || "Registration successful ");
 
       setTimeout(() => {
         navigate("/");
@@ -58,13 +58,13 @@ export default function SignUp() {
   return (
     <div className="min-h-screen relative flex flex-col bg-gray-50 overflow-hidden">
 
-      {/* Ambient gradient background (same as Login) */}
+      
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-pink-100 opacity-50" />
 
-      {/* ================= NAVBAR (same as Login) ================= */}
+      {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
-          {/* Logo */}
+
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
               ES
@@ -74,7 +74,6 @@ export default function SignUp() {
             </h1>
           </div>
 
-          {/* Nav Links */}
           <div className="hidden md:flex gap-5 font-medium">
             <Link
               to="/"
@@ -99,7 +98,6 @@ export default function SignUp() {
             </span>
           </div>
 
-          {/* Login Button */}
           <Link
             to="/"
             className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
@@ -109,11 +107,10 @@ export default function SignUp() {
         </div>
       </nav>
 
-      {/* ================= MAIN ================= */}
+      {/* Main */}
       <main className="relative z-10 flex-1 flex items-center justify-center px-6 py-24 mt-[80px]">
         <div className="w-full max-w-7xl grid md:grid-cols-2 gap-20 items-center">
 
-          {/* LEFT CONTENT */}
           <div className="hidden md:flex justify-center">
             <div className="max-w-xl space-y-7">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-50 text-pink-600 text-xs font-medium">
@@ -142,7 +139,8 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* RIGHT FORM */}
+          {/* Form */}
+
           <div className="flex justify-center">
             <div className="w-full max-w-md bg-white/90 backdrop-blur-xl border border-gray-300/50 shadow-2xl rounded-3xl p-10">
 
@@ -208,7 +206,7 @@ export default function SignUp() {
               <p className="text-sm text-gray-500 text-center mt-7">
                 Already have an account?{" "}
                 <Link
-                  to="/"
+                  to="/login"
                   className="font-medium bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:underline"
                 >
                   Login
@@ -223,7 +221,6 @@ export default function SignUp() {
   );
 }
 
-/* Floating Input */
 function FloatingInput({ label, ...props }) {
   return (
     <div className="relative">

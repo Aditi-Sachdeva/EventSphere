@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import API from "../../api/api";
+import axios from "axios";
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
 
@@ -9,14 +9,20 @@ const ViewUsers = () => {
   const [roleFilter, setRoleFilter] = useState("All");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ msg: "", type: "success" });
-  const [confirmDelete, setConfirmDelete] = useState(null); // user object to delete
-  const [updatingRole, setUpdatingRole] = useState(null);   // userId being updated
-  const [deleting, setDeleting] = useState(null);           // userId being deleted
+  const [confirmDelete, setConfirmDelete] = useState(null); 
+  const [updatingRole, setUpdatingRole] = useState(null);  
+  const [deleting, setDeleting] = useState(null);     
+
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await API.get("/admin/users");
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get("http://localhost:5000/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       const formattedUsers = res.data.users.map((user) => ({
         id: user._id,
         name: user.name,
@@ -37,13 +43,18 @@ const ViewUsers = () => {
     fetchUsers();
   }, []);
 
+
   const updateRole = async (userId, newRole) => {
     setUpdatingRole(userId);
     try {
-      await API.put("/admin/user/role", {
-        userId,
-        newRole: newRole.toLowerCase(),
-      });
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        "http://localhost:5000/api/admin/user/role",
+        { userId, newRole: newRole.toLowerCase() },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
       );
@@ -58,7 +69,12 @@ const ViewUsers = () => {
   const deleteUser = async (userId) => {
     setDeleting(userId);
     try {
-      await API.delete(`/admin/user/${userId}`);
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`http://localhost:5000/api/admin/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setUsers((prev) => prev.filter((u) => u.id !== userId));
       showToast("User deleted successfully");
     } catch (error) {
@@ -68,6 +84,9 @@ const ViewUsers = () => {
       setConfirmDelete(null);
     }
   };
+
+
+
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
@@ -83,7 +102,7 @@ const ViewUsers = () => {
   });
 
   const roleColor = (role) => {
-    if (role === "Admin")     return "bg-violet-100 text-violet-700 border-violet-200";
+    if (role === "Admin") return "bg-violet-100 text-violet-700 border-violet-200";
     if (role === "Organizer") return "bg-pink-100 text-pink-700 border-pink-200";
     return "bg-gray-100 text-gray-600 border-gray-200";
   };
@@ -103,16 +122,16 @@ const ViewUsers = () => {
             <h1 className="text-3xl font-bold text-gray-900">Manage Users</h1>
             <p className="text-sm text-gray-500 mt-1">View, update roles, and remove registered users</p>
           </div>
-          
+
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Total",      value: users.length,                                          bg: "bg-indigo-100", color: "text-indigo-700", icon: "👥" },
-            { label: "Active",     value: users.length,                                          bg: "bg-emerald-100",color: "text-emerald-700",icon: "✅" },
-            { label: "Organizers", value: users.filter(u => u.role === "Organizer").length,      bg: "bg-pink-100",   color: "text-pink-700",  icon: "🧑‍💼" },
-            { label: "Admins",     value: users.filter(u => u.role === "Admin").length,          bg: "bg-violet-100", color: "text-violet-700",icon: "⭐" },
+            { label: "Total", value: users.length, bg: "bg-indigo-100", color: "text-indigo-700", icon: "👥" },
+            { label: "Active", value: users.length, bg: "bg-emerald-100", color: "text-emerald-700", icon: "✅" },
+            { label: "Organizers", value: users.filter(u => u.role === "Organizer").length, bg: "bg-pink-100", color: "text-pink-700", icon: "🧑‍💼" },
+            { label: "Admins", value: users.filter(u => u.role === "Admin").length, bg: "bg-violet-100", color: "text-violet-700", icon: "⭐" },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
               <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center text-2xl`}>
@@ -139,11 +158,10 @@ const ViewUsers = () => {
               <button
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
-                  roleFilter === r
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${roleFilter === r
                     ? "text-white border-transparent shadow-md"
                     : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50"
-                }`}
+                  }`}
                 style={roleFilter === r ? { background: GRAD } : {}}
               >
                 {r}
@@ -155,7 +173,6 @@ const ViewUsers = () => {
         {/* Users List */}
         <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
 
-          {/* Table Header */}
           <div className="hidden md:grid grid-cols-12 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
             <div className="col-span-4">User</div>
             <div className="col-span-3">Role</div>
@@ -176,7 +193,7 @@ const ViewUsers = () => {
                 <div key={user.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
                   <div className="grid grid-cols-12 items-center gap-2">
 
-                    {/* Avatar + Name */}
+                    {/* Name */}
                     <div className="col-span-12 md:col-span-4 flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-xs uppercase shrink-0"
@@ -247,7 +264,7 @@ const ViewUsers = () => {
 
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete*/}
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm mx-4 border border-gray-100">
@@ -286,9 +303,8 @@ const ViewUsers = () => {
       {/* Toast */}
       {toast.msg && (
         <div
-          className={`fixed bottom-6 right-6 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white transition-all ${
-            toast.type === "error" ? "bg-red-500" : ""
-          }`}
+          className={`fixed bottom-6 right-6 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white transition-all ${toast.type === "error" ? "bg-red-500" : ""
+            }`}
           style={toast.type !== "error" ? { background: GRAD } : {}}
         >
           {toast.type === "error" ? "❌" : "✅"} {toast.msg}

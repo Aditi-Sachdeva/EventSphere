@@ -25,7 +25,7 @@ const MainPage = () => {
     const fetchData = async () => {
         try {
             // const eventsRes = await axios.get("http://localhost:5000/events");
-            const clubsRes = await axios.get("http://localhost:5000/api/admin/clubs");
+            const clubsRes = await axios.get("http://localhost:5000/api/club/allClubs");
 
             // setEvents(eventsRes.data.events || []);
             setClubs(clubsRes.data.clubs || []);
@@ -59,10 +59,9 @@ const MainPage = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen text-gray-800">
-            {/* ================= NAVBAR ================= */}
+            {/* Navbar */}
             <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200 h-16">
                 <div className="max-w-7xl mx-auto px-5 h-full flex justify-between items-center">
-                    {/* Logo */}
                     <div className="flex items-center gap-2">
                         <Link to="/mainpage" className="flex items-center gap-2">
                             <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
@@ -74,7 +73,6 @@ const MainPage = () => {
                         </Link>
                     </div>
 
-                    {/* Links */}
                     <div className="hidden md:flex gap-8 font-medium ml-10">
                         <Link
                             to="/mainpage"
@@ -100,7 +98,6 @@ const MainPage = () => {
                         </Link>
                     </div>
 
-                    {/* User Box */}
                     <div className="relative">
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -135,7 +132,7 @@ const MainPage = () => {
                 </div>
             </nav>
 
-            {/* ================= HERO ================= */}
+            {/* Hero Section*/}
             <section className="relative h-[560px] md:h-[730px] overflow-hidden">
                 <img
                     src={heroImage}
@@ -176,7 +173,7 @@ const MainPage = () => {
                 </div>
             </section>
 
-            {/* ================= EVENTS ================= */}
+            {/* Event Section*/}
             <section id="events-section" className="py-16 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="flex justify-between items-center mb-8">
@@ -203,7 +200,7 @@ const MainPage = () => {
                                     <p className="text-sm text-gray-500 mb-3">
                                         {event.date
                                             ? new Date(event.date).toLocaleDateString()
-                                                                                        : "Date not specified"}
+                                            : "Date not specified"}
                                     </p>
                                     <Link
                                         to="/mainpage"
@@ -218,14 +215,20 @@ const MainPage = () => {
                 </div>
             </section>
 
-            {/* ================= CLUBS ================= */}
-            <section id="clubs-section" className="py-16 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-50">
+            {/* Club Section*/}
+            <section
+                id="clubs-section"
+                className="py-16 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-100"
+            >
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-500 to-pink-600 bg-clip-text text-transparent">
                             Popular Clubs
                         </h3>
-                        <Link to="/mainpage" className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition">
+                        <Link
+                            to="/mainpage"
+                            className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
+                        >
                             View All →
                         </Link>
                     </div>
@@ -239,9 +242,8 @@ const MainPage = () => {
                             {clubs.slice(0, 4).map((club) => (
                                 <div
                                     key={club._id}
-                                    className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
+                                    className="bg-white border border-gray-200 rounded-2xl shadow-lg shadow-indigo-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
                                 >
-                                    {/* Gradient Circle with First Letter */}
                                     <div className="w-14 h-14 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 text-white font-bold text-lg mb-4">
                                         {club.name.charAt(0).toUpperCase()}
                                     </div>
@@ -256,7 +258,8 @@ const MainPage = () => {
                 </div>
             </section>
 
-            {/* ================= FOOTER ================= */}
+
+            {/* Footer */}
             <footer className="mt-20 bg-gray-100 border-t border-gray-300 shadow-inner">
                 <div className="max-w-6xl mx-auto px-6 py-14">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -300,7 +303,7 @@ const MainPage = () => {
                     </div>
                 </div>
 
-                {/* Bottom Section */}
+                {/* Bottom */}
                 <div className="bg-gray-200 border-t border-gray-300">
                     <div className="max-w-6xl mx-auto px-6 py-6 text-center text-sm text-gray-800 tracking-wide">
                         <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent font-semibold">

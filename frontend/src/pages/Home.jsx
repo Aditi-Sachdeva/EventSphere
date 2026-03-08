@@ -14,10 +14,10 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const eventsRes = await axios.get("http://localhost:5000/events");
-      const clubsRes = await axios.get("http://localhost:5000/clubs");
+      // const eventsRes = await axios.get("http://localhost:5000/api/event/allEvents");
+      const clubsRes = await axios.get("http://localhost:5000/api/club/allClubs");
 
-      setEvents(eventsRes.data.events || []);
+      // setEvents(eventsRes.data.events || []);
       setClubs(clubsRes.data.clubs || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -29,9 +29,10 @@ const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800">
 
+      {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
-          {/* Logo */}
+
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
               ES
@@ -41,7 +42,6 @@ const Home = () => {
             </h1>
           </div>
 
-          {/* Links */}
           <div className="hidden md:flex gap-5 font-medium">
             <Link
               to="/"
@@ -74,7 +74,6 @@ const Home = () => {
 
           </div>
 
-          {/* Register Button */}
           <Link
             to="/signup"
             className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
@@ -85,19 +84,16 @@ const Home = () => {
       </nav>
 
 
-      {/* ================= HERO ================= */}
+      {/* Hero Section */}
       <section className="relative h-[560px] md:h-[730px] overflow-hidden">
-        {/* Hero Image */}
         <img
           src={heroImage}
           alt="Hero"
           className="w-full h-full object-cover object-center md:object-top"
         />
 
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-pink-500/20 to-indigo-600/20"></div>
 
-        {/* Hero Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-lg">
             Discover{" "}
@@ -118,26 +114,25 @@ const Home = () => {
           </p>
 
           <div className="flex justify-center gap-6">
-            <Link
-              to="/events"
+            <button
+              onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })}
               className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
             >
               Browse Events
-            </Link>
-
-            <Link
-              to="/clubs"
+            </button>
+            <button
+              onClick={() => document.getElementById("clubs-section")?.scrollIntoView({ behavior: "smooth" })}
               className="px-6 py-2.5 border border-white rounded-full font-semibold hover:bg-white hover:text-indigo-600 transition"
             >
               Explore Clubs
-            </Link>
+            </button>
           </div>
         </div>
       </section>
 
 
-      {/* ================= EVENTS ================= */}
-      <section className="py-16 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30">
+      {/* Event Section */}
+      <section className="py-16 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30" id="events-section" >
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
@@ -189,15 +184,18 @@ const Home = () => {
 
 
 
-      {/* ================= CLUBS ================= */}
-      <section className="py-16 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-50">
+      {/* Club Section */}
+      <section
+        id="clubs-section"
+        className="py-16 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-100"
+      >
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-500 to-pink-600 bg-clip-text text-transparent">
               Popular Clubs
             </h3>
             <Link
-              to="/clubs"
+              to="/mainpage"
               className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
             >
               View All →
@@ -213,12 +211,13 @@ const Home = () => {
               {clubs.slice(0, 4).map((club) => (
                 <div
                   key={club._id}
-                  className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
+                  className="bg-white border border-gray-200 rounded-2xl shadow-lg shadow-indigo-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
                 >
-                  <div className="w-14 h-14 mx-auto bg-white rounded-full shadow mb-4"></div>
-
+                  {/* Gradient Circle with First Letter */}
+                  <div className="w-14 h-14 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 text-white font-bold text-lg mb-4">
+                    {club.name.charAt(0).toUpperCase()}
+                  </div>
                   <h4 className="font-semibold text-lg text-gray-800">{club.name}</h4>
-
                   <p className="text-sm text-gray-500 mt-2 line-clamp-2">
                     {club.description || "No description available"}
                   </p>
@@ -230,7 +229,7 @@ const Home = () => {
       </section>
 
 
-      {/* ================= FOOTER ================= */}
+      {/* Footer */}
       <footer className="mt-20 bg-gray-100 border-t border-gray-300 shadow-inner">
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -274,7 +273,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Bottom Section */}
+        {/* Bottom */}
         <div className="bg-gray-200 border-t border-gray-300">
           <div className="max-w-6xl mx-auto px-6 py-6 text-center text-sm text-gray-800 tracking-wide">
             <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent font-semibold">

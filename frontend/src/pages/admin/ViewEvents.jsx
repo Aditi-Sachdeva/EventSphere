@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import API from '../../api/api';
+import axios from "axios"; 
+
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
+
 
 const ViewEvents = () => {
   const [events, setEvents] = useState([]);
@@ -10,12 +12,17 @@ const ViewEvents = () => {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ msg: '', type: '' });
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [actioningId, setActioningId] = useState(null); // eventId being approved/rejected
+  const [actioningId, setActioningId] = useState(null); 
 
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await API.get('/admin/events');
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get("http://localhost:5000/api/admin/events", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setEvents(res.data.events || []);
     } catch (err) {
       showToast('Failed to fetch events', 'error');
@@ -31,7 +38,14 @@ const ViewEvents = () => {
   const approveEvent = async (eventId) => {
     setActioningId(eventId);
     try {
-      await API.put(`/admin/event/approve/${eventId}`);
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `http://localhost:5000/api/admin/event/approve/${eventId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       setEvents((prev) =>
         prev.map((e) => (e._id === eventId ? { ...e, status: 'approved' } : e))
       );
@@ -46,7 +60,14 @@ const ViewEvents = () => {
   const rejectEvent = async (eventId) => {
     setActioningId(eventId);
     try {
-      await API.put(`/admin/event/reject/${eventId}`);
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `http://localhost:5000/api/admin/event/reject/${eventId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       setEvents((prev) =>
         prev.map((e) => (e._id === eventId ? { ...e, status: 'rejected' } : e))
       );
@@ -63,7 +84,6 @@ const ViewEvents = () => {
     setTimeout(() => setToast({ msg: '', type: '' }), 3000);
   };
 
-  // Client-side filtering
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
       !search ||
@@ -161,7 +181,6 @@ const ViewEvents = () => {
         {/* Events List */}
         <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
 
-          {/* Table Header */}
           <div className="hidden md:grid grid-cols-12 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
             <div className="col-span-4">Event</div>
             <div className="col-span-3">Club / Organizer</div>
@@ -180,7 +199,7 @@ const ViewEvents = () => {
                 <div key={event._id} className="px-6 py-4 hover:bg-gray-50 transition-colors group">
                   <div className="grid grid-cols-12 items-center gap-2">
 
-                    {/* Avatar + Title */}
+                    {/* Title */}
                     <div className="col-span-12 md:col-span-4 flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0"
@@ -233,7 +252,7 @@ const ViewEvents = () => {
 
                     {/* Actions */}
                     <div className="col-span-6 md:col-span-1 flex justify-end items-center gap-1">
-                      {/* View */}
+
                       <button
                         onClick={() => setSelectedEvent(event)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center bg-gray-50 text-gray-400 hover:bg-indigo-50 hover:text-indigo-500 border border-gray-200 transition-all text-xs"
@@ -273,13 +292,12 @@ const ViewEvents = () => {
         </div>
       </div>
 
-      {/* Event Detail Modal */}
+      {/* Event Detail*/}
       {selectedEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-100">
             <div className="p-6">
 
-              {/* Modal Header */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <div
@@ -336,7 +354,7 @@ const ViewEvents = () => {
                   </div>
                 )}
 
-                {/* Approve / Reject from modal if pending */}
+                {/* Approve / Reject */}
                 {selectedEvent.status === 'pending' && (
                   <div className="flex gap-3 pt-1">
                     <button

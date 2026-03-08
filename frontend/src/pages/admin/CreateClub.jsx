@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Users, Plus, CheckCircle2, Sparkles, AlertCircle } from "lucide-react";
-import API from "../../api/api";
+import axios from "axios";
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
+
 
 export default function CreateClub() {
   const [name, setName] = useState("");
@@ -17,13 +18,18 @@ export default function CreateClub() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ msg: "", type: "" });
 
-  // Fetch organizers (users with role === "organizer") and total clubs count
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("token");
+
         const [usersRes, clubsRes] = await Promise.all([
-          API.get("/admin/users"),
-          API.get("/admin/clubs"),
+          axios.get("http://localhost:5000/api/admin/users", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("http://localhost:5000/api/admin/clubs", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
 
         const allUsers = usersRes.data.users || [];
@@ -52,11 +58,17 @@ export default function CreateClub() {
 
     setSubmitting(true);
     try {
-      await API.post("/admin/club/create", {
-        name: name.trim(),
-        description: description.trim(),
-        mainOrganizerId: organizerId,
-      });
+      const token = localStorage.getItem("token");
+
+      await axios.post(
+        "http://localhost:5000/api/admin/club/create",
+        {
+          name: name.trim(),
+          description: description.trim(),
+          mainOrganizerId: organizerId,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       showToast("Club created successfully!");
       setTotalClubs((prev) => prev + 1);
@@ -78,6 +90,7 @@ export default function CreateClub() {
   };
 
   const selectedOrganizer = organizers.find((o) => o._id === organizerId);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 p-6">
@@ -207,7 +220,7 @@ export default function CreateClub() {
           </div>
         </div>
 
-        {/* RIGHT — Stats + Tips only */}
+        {/* RIGHT */}
         <div className="space-y-6">
 
           {/* Tips */}

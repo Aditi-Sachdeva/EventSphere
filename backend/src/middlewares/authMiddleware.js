@@ -15,9 +15,9 @@ function checkAuth(req,res,next){
 
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
         
-        req.user = decoded;
+        req.user = decoded; // payload
 
-        next();
+        next(); // Next Middleware or Route Handler
     }
     catch(error){
         return res.status(401).json({ msg : "Invalid or expired token"});

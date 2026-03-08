@@ -43,6 +43,20 @@ async function handleJoinClub(req, res) {
 }
 
 
+async function handleGetPublicClubs(req, res) {
+  try {
+    const clubs = await Club.find({}, "name description isActive");
+
+    return res.status(200).json({
+      msg: "Clubs fetched successfully",
+      clubs,
+    });
+  } catch (error) {
+    return res.status(500).json({ msg: "Server Error" });
+  }
+}
+
+
 async function handleApproveMember(req, res) {
     try {
         const { clubId, userId } = req.body;
@@ -137,6 +151,7 @@ async function handleRemoveMember(req, res) {
 
 module.exports = {
     handleJoinClub,
+    handleGetPublicClubs,
     handleApproveMember,
     handleRemoveMember,
 }

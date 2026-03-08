@@ -16,7 +16,10 @@ app.use(express.json());
 
 app.use('/api/auth',require('./src/routes/authRoute'));
 
-app.use("/api/admin", require("./src/routes/adminRoutes"));
+app.use("/api/admin", require("./src/routes/adminRoute"));
+
+app.use("/api/club", require("./src/routes/clubRoute"));
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

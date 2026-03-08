@@ -23,10 +23,10 @@ export default function Login() {
       const res = await axios.post("http://localhost:5000/api/auth/login", formData);
 
       if (res.data.token) localStorage.setItem("token", res.data.token);
-      if (res.data.user) localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (res.data.user) localStorage.setItem("user", JSON.stringify(res.data.user)); // JS object and localstorage can only store strings so JSON string
 
       setIsError(false);
-      setMessage(res.data.msg || "Login successful 🎉");
+      setMessage(res.data.msg || "Login successful");
 
       setTimeout(() => navigate("/mainpage"), 1000);
     } catch (err) {
@@ -40,13 +40,12 @@ export default function Login() {
   return (
     <div className="min-h-screen relative flex flex-col bg-gray-50 overflow-hidden">
 
-      {/* Ambient gradient background (diagonal pink → indigo) */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-pink-100 opacity-50" />
 
-      {/* ================= NAVBAR (same as Home) ================= */}
+      {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
-          {/* Logo */}
+
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
               ES
@@ -56,7 +55,6 @@ export default function Login() {
             </h1>
           </div>
 
-          {/* Nav Links */}
           <div className="hidden md:flex gap-5 font-medium">
             <Link
               to="/"
@@ -81,7 +79,6 @@ export default function Login() {
             </span>
           </div>
 
-          {/* Register Button */}
           <Link
             to="/signup"
             className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
@@ -92,13 +89,10 @@ export default function Login() {
       </nav>
 
 
-
-
-      {/* ================= MAIN ================= */}
+      {/* Main */}
       <main className="relative z-10 flex-1 flex items-center justify-center px-6 py-24 mt-[80px]">
         <div className="w-full max-w-7xl grid md:grid-cols-2 gap-20 items-center">
 
-          {/* LEFT CONTENT */}
           <div className="hidden md:flex justify-center">
             <div className="max-w-xl space-y-7">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-50 text-pink-600 text-xs font-medium">
@@ -125,8 +119,9 @@ export default function Login() {
               </div>
             </div>
           </div>
+          
 
-          {/* RIGHT FORM */}
+          {/* Form */}
           <div className="flex justify-center">
             <div className="w-full max-w-md bg-white/90 backdrop-blur-xl border border-gray-300/50 shadow-2xl rounded-3xl p-10">
 
@@ -189,7 +184,6 @@ export default function Login() {
   );
 }
 
-/* floating input */
 function FloatingInput({ label, ...props }) {
   return (
     <div className="relative">

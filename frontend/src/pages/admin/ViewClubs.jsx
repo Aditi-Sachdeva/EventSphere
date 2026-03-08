@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import API from '../../api/api';
+import axios from "axios";
+
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
 
@@ -15,7 +16,12 @@ const ViewClubs = () => {
   const fetchClubs = async () => {
     setLoading(true);
     try {
-      const res = await API.get('/admin/clubs');
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get("http://localhost:5000/api/admin/clubs", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setClubs(res.data.clubs || []);
     } catch (err) {
       showToast('Failed to fetch clubs', 'error');
@@ -29,12 +35,10 @@ const ViewClubs = () => {
   }, []);
 
   const toggleStatus = async (club) => {
-    // If active, show confirmation before deactivating
     if (club.isActive) {
       setConfirmDeactivate(club);
       return;
     }
-    // Reactivate directly
     await doToggle(club);
   };
 
@@ -42,11 +46,22 @@ const ViewClubs = () => {
     setTogglingId(club._id);
     setConfirmDeactivate(null);
     try {
+      const token = localStorage.getItem("token");
+
       if (club.isActive) {
-        await API.put(`/admin/club/deactivate/${club._id}`);
+        await axios.put(
+          `http://localhost:5000/api/admin/club/deactivate/${club._id}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       } else {
-        await API.put(`/admin/club/reactivate/${club._id}`);
+        await axios.put(
+          `http://localhost:5000/api/admin/club/reactivate/${club._id}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       }
+
       setClubs((prev) =>
         prev.map((c) =>
           c._id === club._id ? { ...c, isActive: !c.isActive } : c
@@ -66,7 +81,6 @@ const ViewClubs = () => {
     setTimeout(() => setToast({ msg: '', type: '' }), 3000);
   };
 
-  // Client-side filtering
   const filteredClubs = clubs.filter((club) => {
     const matchesSearch =
       !search ||
@@ -86,6 +100,7 @@ const ViewClubs = () => {
     active: clubs.filter((c) => c.isActive).length,
     inactive: clubs.filter((c) => !c.isActive).length,
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 py-8 px-4">
@@ -109,9 +124,9 @@ const ViewClubs = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           {[
-            { label: 'Total',    value: stats.total,    bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '🏛' },
-            { label: 'Active',   value: stats.active,   bg: 'bg-emerald-100',color: 'text-emerald-700',icon: '✅' },
-            { label: 'Inactive', value: stats.inactive, bg: 'bg-red-100',    color: 'text-red-700',    icon: '⏸️' },
+            { label: 'Total', value: stats.total, bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '🏛' },
+            { label: 'Active', value: stats.active, bg: 'bg-emerald-100', color: 'text-emerald-700', icon: '✅' },
+            { label: 'Inactive', value: stats.inactive, bg: 'bg-red-100', color: 'text-red-700', icon: '⏸️' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
               <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center text-2xl`}>
@@ -139,11 +154,10 @@ const ViewClubs = () => {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
-                  statusFilter === s
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${statusFilter === s
                     ? 'text-white border-transparent shadow-md'
                     : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50'
-                }`}
+                  }`}
                 style={statusFilter === s ? { background: GRAD } : {}}
               >
                 {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -155,7 +169,6 @@ const ViewClubs = () => {
         {/* Clubs List */}
         <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
 
-          {/* Table Header */}
           <div className="hidden md:grid grid-cols-12 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
             <div className="col-span-4">Club</div>
             <div className="col-span-3">Main Organizer</div>
@@ -174,7 +187,7 @@ const ViewClubs = () => {
                 <div key={club._id} className="px-6 py-4 hover:bg-gray-50 transition-colors group">
                   <div className="grid grid-cols-12 items-center gap-2">
 
-                    {/* Avatar + Name */}
+                    {/* Title */}
                     <div className="col-span-12 md:col-span-4 flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0"
@@ -216,11 +229,10 @@ const ViewClubs = () => {
 
                     {/* Status */}
                     <div className="col-span-6 md:col-span-2">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
-                        club.isActive
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${club.isActive
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                           : 'bg-red-50 text-red-600 border-red-200'
-                      }`}>
+                        }`}>
                         {club.isActive ? '● Active' : '● Inactive'}
                       </span>
                     </div>
@@ -231,11 +243,10 @@ const ViewClubs = () => {
                         onClick={() => toggleStatus(club)}
                         disabled={togglingId === club._id}
                         title={club.isActive ? 'Deactivate' : 'Reactivate'}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all text-sm disabled:opacity-50 ${
-                          club.isActive
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all text-sm disabled:opacity-50 ${club.isActive
                             ? 'bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 border-red-100'
                             : 'bg-emerald-50 text-emerald-500 hover:bg-emerald-100 hover:text-emerald-700 border-emerald-100'
-                        }`}
+                          }`}
                       >
                         {togglingId === club._id ? '⏳' : club.isActive ? '⏸️' : '▶️'}
                       </button>
@@ -249,7 +260,7 @@ const ViewClubs = () => {
         </div>
       </div>
 
-      {/* Deactivate Confirmation Modal */}
+      {/* Deactivate*/}
       {confirmDeactivate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm mx-4 border border-gray-100">
@@ -281,9 +292,8 @@ const ViewClubs = () => {
       {/* Toast */}
       {toast.msg && (
         <div
-          className={`fixed bottom-6 right-6 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 ${
-            toast.type === 'error' ? 'bg-red-500' : ''
-          }`}
+          className={`fixed bottom-6 right-6 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500' : ''
+            }`}
           style={toast.type !== 'error' ? { background: GRAD } : {}}
         >
           {toast.type === 'error' ? '❌' : '✅'} {toast.msg}

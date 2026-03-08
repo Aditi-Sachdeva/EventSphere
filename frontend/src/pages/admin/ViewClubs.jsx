@@ -28,14 +28,9 @@ const ViewClubs = () => {
     fetchClubs();
   }, []);
 
-  const toggleStatus = async (club) => {
-    // If active, show confirmation before deactivating
-    if (club.isActive) {
-      setConfirmDeactivate(club);
-      return;
-    }
-    // Reactivate directly
-    await doToggle(club);
+  // CHANGE 1: confirmation for both activate & deactivate
+  const toggleStatus = (club) => {
+    setConfirmDeactivate(club);
   };
 
   const doToggle = async (club) => {
@@ -66,7 +61,6 @@ const ViewClubs = () => {
     setTimeout(() => setToast({ msg: '', type: '' }), 3000);
   };
 
-  // Client-side filtering
   const filteredClubs = clubs.filter((club) => {
     const matchesSearch =
       !search ||
@@ -109,9 +103,9 @@ const ViewClubs = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           {[
-            { label: 'Total',    value: stats.total,    bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '🏛' },
-            { label: 'Active',   value: stats.active,   bg: 'bg-emerald-100',color: 'text-emerald-700',icon: '✅' },
-            { label: 'Inactive', value: stats.inactive, bg: 'bg-red-100',    color: 'text-red-700',    icon: '⏸️' },
+            { label: 'Total', value: stats.total, bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '🏛' },
+            { label: 'Active', value: stats.active, bg: 'bg-emerald-100', color: 'text-emerald-700', icon: '✅' },
+            { label: 'Inactive', value: stats.inactive, bg: 'bg-red-100', color: 'text-red-700', icon: '⏸️' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
               <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center text-2xl`}>
@@ -155,7 +149,6 @@ const ViewClubs = () => {
         {/* Clubs List */}
         <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
 
-          {/* Table Header */}
           <div className="hidden md:grid grid-cols-12 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
             <div className="col-span-4">Club</div>
             <div className="col-span-3">Main Organizer</div>
@@ -174,7 +167,6 @@ const ViewClubs = () => {
                 <div key={club._id} className="px-6 py-4 hover:bg-gray-50 transition-colors group">
                   <div className="grid grid-cols-12 items-center gap-2">
 
-                    {/* Avatar + Name */}
                     <div className="col-span-12 md:col-span-4 flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0"
@@ -190,7 +182,6 @@ const ViewClubs = () => {
                       </div>
                     </div>
 
-                    {/* Main Organizer */}
                     <div className="col-span-6 md:col-span-3">
                       {club.mainOrganizer ? (
                         <div className="flex items-center gap-2">
@@ -207,14 +198,12 @@ const ViewClubs = () => {
                       )}
                     </div>
 
-                    {/* Organizers count */}
                     <div className="col-span-3 md:col-span-2">
                       <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
                         👥 {club.organizers?.length || 0}
                       </span>
                     </div>
 
-                    {/* Status */}
                     <div className="col-span-6 md:col-span-2">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
                         club.isActive
@@ -225,7 +214,6 @@ const ViewClubs = () => {
                       </span>
                     </div>
 
-                    {/* Actions */}
                     <div className="col-span-3 md:col-span-1 flex justify-end">
                       <button
                         onClick={() => toggleStatus(club)}
@@ -249,17 +237,28 @@ const ViewClubs = () => {
         </div>
       </div>
 
-      {/* Deactivate Confirmation Modal */}
+      {/* Confirmation Modal */}
       {confirmDeactivate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm mx-4 border border-gray-100">
             <div className="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-2xl mb-4 mx-auto">⏸️</div>
-            <h3 className="text-lg font-black text-gray-900 text-center mb-1">Deactivate Club?</h3>
-            <p className="text-sm text-gray-500 text-center mb-1">You're about to deactivate</p>
-            <p className="text-sm font-bold text-gray-800 text-center mb-5">"{confirmDeactivate.name}"</p>
+
+            <h3 className="text-lg font-black text-gray-900 text-center mb-1">
+              {confirmDeactivate.isActive ? 'Deactivate Club?' : 'Reactivate Club?'}
+            </h3>
+
+            <p className="text-sm text-gray-500 text-center mb-1">
+              You're about to {confirmDeactivate.isActive ? 'deactivate' : 'reactivate'}
+            </p>
+
+            <p className="text-sm font-bold text-gray-800 text-center mb-5">
+              "{confirmDeactivate.name}"
+            </p>
+
             <p className="text-xs text-amber-600 text-center mb-6 bg-amber-50 rounded-xl px-3 py-2 border border-amber-100">
               ⚠️ Members won't be able to join or create events under this club.
             </p>
+
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDeactivate(null)}
@@ -267,12 +266,18 @@ const ViewClubs = () => {
               >
                 Cancel
               </button>
+
               <button
                 onClick={() => doToggle(confirmDeactivate)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition"
+                className={`flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition ${
+                  confirmDeactivate.isActive
+                    ? 'bg-red-500 hover:bg-red-600'
+                    : 'bg-green-500 hover:bg-green-600'
+                }`}
               >
-                Deactivate
+                {confirmDeactivate.isActive ? 'Deactivate' : 'Reactivate'}
               </button>
+
             </div>
           </div>
         </div>

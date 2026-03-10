@@ -99,7 +99,7 @@ export default function SignUp() {
           </div>
 
           <Link
-            to="/"
+            to="/login"
             className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
           >
             Login

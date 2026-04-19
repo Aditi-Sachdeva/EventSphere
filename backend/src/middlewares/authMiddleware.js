@@ -15,7 +15,9 @@ function checkAuth(req,res,next){
 
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
         
-        req.user = decoded; // payload
+        // req.user = decoded; // payload
+
+        req.user = { _id: decoded.id, role: decoded.role };
 
         next(); // Next Middleware or Route Handler
     }

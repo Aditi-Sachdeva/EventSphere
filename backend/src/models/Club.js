@@ -43,6 +43,6 @@ const clubSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-const Club = mongoose.model("Club", clubSchema);
+const Club = mongoose.model("Club", clubSchema);//MONGOOSE MODEL IS CREARED NOW WE CAN PERFORM CONTROLLER OPERATIONS USING THIS LIKE CLIB.FIND();
 
 module.exports = Club;

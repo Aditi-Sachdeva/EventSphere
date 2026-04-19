@@ -2,7 +2,7 @@
 const express = require('express');
 const {handleSignup, handleLogin} = require('../controllers/authController');
 
-const router = express.Router();
+const router = express.Router();//TO MAKE SEPARATE ROUTE FILES
 
 
 router.post('/signup', handleSignup);

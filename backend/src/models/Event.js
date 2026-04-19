@@ -11,7 +11,7 @@ const registrationSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-}, { _id: false });
+}, { _id: false });// TO PREVENT CREATING ID FIEND IN SUBDOCUMENTS
 
 const eventSchema = new mongoose.Schema({
 

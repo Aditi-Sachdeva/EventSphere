@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router();//CREATE ROUTER
 
 const {
   handleCreateClub,
@@ -13,13 +13,13 @@ const {
   handleApproveEvent,
   handleRejectEvent,
   handleDeleteUser
-} = require("../controllers/adminController");
+} = require("../controllers/adminController");//CONTROLLERS
 
 const { checkAuth } = require("../middlewares/authMiddleware");
 const { checkRole } = require('../middlewares/roleMiddleware');
 
 
-
+//   HTTP METHOD , ROUTE PATH , MIDDLEWARES , CONTROLLER
 router.post("/club/create",checkAuth,checkRole(["admin"]), handleCreateClub);
 router.post("/club/add-organizer",checkAuth,checkRole(["admin"]),  handleAddOrganizer);
 router.get("/clubs",checkAuth,checkRole(["admin"]), handleGetAllClubs);

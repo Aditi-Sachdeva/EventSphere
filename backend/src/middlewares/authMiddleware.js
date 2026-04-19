@@ -1,11 +1,11 @@
 
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");//IMPORT JWT LIBRARY ->CREATE TOKEN AND VERIFY TOKEN WHEN USER LOGS IN
 
-function checkAuth(req,res,next){
+function checkAuth(req,res,next){//MIDDLEWARE FUNCTION  , REQ FROM CLIENT , RESPONSE SENT TO CLIENT , FUNCTION THAT MOVES TO NEXT STEP
     
     try{
 
-        const authHeader = req.headers.authorization;
+        const authHeader = req.headers.authorization;  //EG AUTHORIZATION : BEARER ABC123XYZ
 
         if(!authHeader || !authHeader.startsWith('Bearer ')){
             return res.status(401).json({ msg : "No token provided"});
@@ -13,9 +13,9 @@ function checkAuth(req,res,next){
 
         const token = authHeader.split(" ")[1];
 
-        const decoded = jwt.verify(token,process.env.JWT_SECRET);
+        const decoded = jwt.verify(token,process.env.JWT_SECRET); // VERIGY USING SECRET KEY 
         
-        req.user = decoded; // payload
+        req.user = decoded; // payload -> INFO AVAILABLE
 
         next(); // Next Middleware or Route Handler
     }

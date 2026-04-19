@@ -1,11 +1,11 @@
 
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({//SCHEMA DEFINES HOW DATA WILL BE STORED
     name: {
         type: String,
         required: true,
-        trim: true,
+        trim: true,//REMOVE EXTRA SPACES
     },
     email: {
         type: String,

@@ -15,7 +15,11 @@ function checkAuth(req,res,next){//MIDDLEWARE FUNCTION  , REQ FROM CLIENT , RESP
 
         const decoded = jwt.verify(token,process.env.JWT_SECRET); // VERIGY USING SECRET KEY 
         
+
         req.user = decoded; // payload -> INFO AVAILABLE
+        // req.user = decoded; // payload
+
+        req.user = { _id: decoded.id, role: decoded.role };
 
         next(); // Next Middleware or Route Handler
     }

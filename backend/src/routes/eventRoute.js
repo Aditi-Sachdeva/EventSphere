@@ -20,6 +20,8 @@ const {
 const { checkAuth } = require("../middlewares/authMiddleware");
 const { checkRole } = require("../middlewares/roleMiddleware");
 
+router.get('/allEvents', handleGetAllEvents);
+
 // router.get("/me", checkAuth, handleGetMyEvents);
 router.get("/me", checkAuth, handleGetMyRegistrations);
 

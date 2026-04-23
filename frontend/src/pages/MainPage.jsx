@@ -24,10 +24,10 @@ const MainPage = () => {
 
     const fetchData = async () => {
         try {
-            // const eventsRes = await axios.get("http://localhost:5000/events");
+            const eventsRes = await axios.get("http://localhost:5000/api/event/allEvents");
             const clubsRes = await axios.get("http://localhost:5000/api/club/allClubs");
 
-            // setEvents(eventsRes.data.events || []);
+            setEvents(eventsRes.data.events || []);
             setClubs(clubsRes.data.clubs || []);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -53,12 +53,11 @@ const MainPage = () => {
         }
     };
 
-    if (!user) {
-        return null;
-    }
+    if (!user) return null;
 
     return (
         <div className="bg-gray-50 min-h-screen text-gray-800">
+
             {/* Navbar */}
             <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200 h-16">
                 <div className="max-w-7xl mx-auto px-5 h-full flex justify-between items-center">
@@ -74,10 +73,7 @@ const MainPage = () => {
                     </div>
 
                     <div className="hidden md:flex gap-8 font-medium ml-10">
-                        <Link
-                            to="/mainpage"
-                            className="px-3 py-1 text-sm bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-md font-semibold shadow-sm"
-                        >
+                        <Link to="/mainpage" className="px-3 py-1 text-sm bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-md font-semibold shadow-sm">
                             Home
                         </Link>
 
@@ -134,39 +130,28 @@ const MainPage = () => {
 
             {/* Hero Section*/}
             <section className="relative h-[560px] md:h-[730px] overflow-hidden">
-                <img
-                    src={heroImage}
-                    alt="Hero"
-                    className="w-full h-full object-cover object-center md:object-top"
-                />
+                <img src={heroImage} alt="Hero" className="w-full h-full object-cover object-center md:object-top" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-pink-500/20 to-indigo-600/20"></div>
+
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
                     <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-lg">
-                        Discover{" "}
-                        <span className="bg-gradient-to-r from-pink-400 to-indigo-500 bg-clip-text text-transparent">
-                            Events
-                        </span>
-                        . <br />
-                        Connect With{" "}
-                        <span className="bg-gradient-to-r from-indigo-400 to-pink-500 bg-clip-text text-transparent">
-                            Clubs
-                        </span>
-                        .
+                        Discover <span className="bg-gradient-to-r from-pink-400 to-indigo-500 bg-clip-text text-transparent">Events</span>.
+                        <br />
+                        Connect With <span className="bg-gradient-to-r from-indigo-400 to-pink-500 bg-clip-text text-transparent">Clubs</span>.
                     </h2>
+
                     <p className="text-base md:text-lg text-gray-200 mb-8 max-w-2xl drop-shadow-md">
                         Explore exciting campus activities and join communities that match your passion.
                     </p>
+
                     <div className="flex justify-center gap-6">
-                        <button
-                            onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })}
-                            className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
-                        >
+                        <button onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })}
+                            className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full font-semibold shadow-md hover:scale-[1.05] transition">
                             Browse Events
                         </button>
-                        <button
-                            onClick={() => document.getElementById("clubs-section")?.scrollIntoView({ behavior: "smooth" })}
-                            className="px-6 py-2.5 border border-white rounded-full font-semibold hover:bg-white hover:text-indigo-600 transition"
-                        >
+
+                        <button onClick={() => document.getElementById("clubs-section")?.scrollIntoView({ behavior: "smooth" })}
+                            className="px-6 py-2.5 border border-white rounded-full font-semibold hover:bg-white hover:text-indigo-600 transition">
                             Explore Clubs
                         </button>
                     </div>
@@ -180,34 +165,50 @@ const MainPage = () => {
                         <h3 className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
                             Upcoming Events
                         </h3>
-                        <Link to="/mainpage" className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition">
-                            View All →
-                        </Link>
                     </div>
 
                     {loading ? (
                         <p className="text-gray-600">Loading events...</p>
-                    ) : events.length === 0 ? (
-                        <p className="text-gray-600">No events available.</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
                             {events.slice(0, 4).map((event) => (
-                                <div key={event._id} className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition">
-                                    <div className="h-28 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-lg mb-4"></div>
+                                <div key={event._id}
+                                    className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition flex flex-col h-full">
+
+                                    {event.image ? (
+                                        <img
+                                            src={event.image}
+                                            alt="event"
+                                            className="h-32 w-full object-cover rounded-lg mb-4"
+                                        />
+                                    ) : (
+                                        <div className="h-32 flex items-center justify-center text-center px-3 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-lg mb-4">
+                                            <span className="text-2xl font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent line-clamp-2">
+                                                {event.title}
+                                            </span>
+                                        </div>
+                                    )}
+
                                     <h4 className="font-semibold text-lg mb-2 text-gray-800">
-                                        {event.title || event.name}
+                                        {event.title}
                                     </h4>
-                                    <p className="text-sm text-gray-500 mb-3">
-                                        {event.date
-                                            ? new Date(event.date).toLocaleDateString()
+
+                                    <p className="text-sm text-gray-500 mb-3 tabular-nums">
+                                        {event.eventDate
+                                            ? new Date(event.eventDate).toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric",
+                                            })
                                             : "Date not specified"}
                                     </p>
-                                    <Link
-                                        to="/mainpage"
-                                        className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
-                                    >
-                                        View Details →
-                                    </Link>
+
+                                    <div className="mt-auto">
+                                        <Link to="/mainpage"
+                                            className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                                            View Details →
+                                        </Link>
+                                    </div>
                                 </div>
                             ))}
                         </div>

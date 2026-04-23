@@ -14,10 +14,10 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      // const eventsRes = await axios.get("http://localhost:5000/api/event/allEvents");
+      const eventsRes = await axios.get("http://localhost:5000/api/event/allEvents");
       const clubsRes = await axios.get("http://localhost:5000/api/club/allClubs");
 
-      // setEvents(eventsRes.data.events || []);
+      setEvents(eventsRes.data.events || []);
       setClubs(clubsRes.data.clubs || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -132,49 +132,57 @@ const Home = () => {
 
 
       {/* Event Section */}
-      <section className="py-16 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30" id="events-section" >
+
+      <section id="events-section" className="py-16 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
               Upcoming Events
             </h3>
-            <Link
-              to="/events"
-              className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
-            >
-              View All →
-            </Link>
           </div>
 
           {loading ? (
             <p className="text-gray-600">Loading events...</p>
-          ) : events.length === 0 ? (
-            <p className="text-gray-600">No events available.</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
               {events.slice(0, 4).map((event) => (
-                <div
-                  key={event._id}
-                  className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition"
-                >
-                  <div className="h-28 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-lg mb-4"></div>
+                <div key={event._id}
+                  className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition flex flex-col h-full">
+
+                  {event.image ? (
+                    <img
+                      src={event.image}
+                      alt="event"
+                      className="h-32 w-full object-cover rounded-lg mb-4"
+                    />
+                  ) : (
+                    <div className="h-32 flex items-center justify-center text-center px-3 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-lg mb-4">
+                      <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent line-clamp-2">
+                        {event.title}
+                      </span>
+                    </div>
+                  )}
 
                   <h4 className="font-semibold text-lg mb-2 text-gray-800">
-                    {event.title || event.name}
+                    {event.title}
                   </h4>
 
-                  <p className="text-sm text-gray-500 mb-3">
-                    {event.date
-                      ? new Date(event.date).toLocaleDateString()
+                  <p className="text-sm text-gray-500 mb-3 tabular-nums">
+                    {event.eventDate
+                      ? new Date(event.eventDate).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
                       : "Date not specified"}
                   </p>
 
-                  <Link
-                    to={`/events/${event._id}`}
-                    className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
-                  >
-                    View Details →
-                  </Link>
+                  <div className="mt-auto">
+                    <Link to="/mainpage"
+                      className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                      View Details →
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

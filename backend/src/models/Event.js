@@ -66,11 +66,17 @@ const eventSchema = new mongoose.Schema({
 
     registrations: [registrationSchema],
 
+    // status: {
+    //     type: String,
+    //     enum: ["upcoming", "completed", "cancelled"],
+    //     default: "upcoming",
+    // }
+
     status: {
-        type: String,
-        enum: ["upcoming", "completed", "cancelled"],
-        default: "upcoming",
-    }
+    type: String,
+    enum: ["upcoming", "completed", "cancelled", "approved", "rejected", "pending"],
+    default: "pending",
+}
 
 }, { timestamps: true });
 

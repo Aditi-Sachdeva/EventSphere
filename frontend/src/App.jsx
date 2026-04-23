@@ -39,3 +39,15 @@ function App() {
 
 export default App;
 
+
+
+// import OrganizerDashboard from "./pages/Organizer/OrganizerDashboard";
+
+// function App() {
+//   return <OrganizerDashboard />;
+// }
+
+// export default App;
+
+
+

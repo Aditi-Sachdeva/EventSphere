@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import axios from "axios";
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
-const API  = "http://localhost:5000/api";
+const API = "http://localhost:5000/api";
 const auth = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
 
 const statusStyle = (status) => {
@@ -13,13 +12,13 @@ const statusStyle = (status) => {
 };
 
 export default function ViewEvents() {
-  const [events, setEvents]       = useState([]);
-  const [search, setSearch]       = useState('');
+  const [events, setEvents] = useState([]);
+  const [search, setSearch] = useState('');
   const [statusFilter, setFilter] = useState('all');
-  const [loading, setLoading]     = useState(false);
-  const [toast, setToast]         = useState({ msg: '', type: '' });
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ msg: '', type: '' });
   const [selectedEvent, setSelected] = useState(null);
-  const [actioningId, setActioning]  = useState(null);
+  const [actioningId, setActioning] = useState(null);
   const [confirm, setConfirm] = useState(null);
 
   useEffect(() => { fetchEvents(); }, []);
@@ -58,8 +57,8 @@ export default function ViewEvents() {
   };
 
   const stats = {
-    total:    events.length,
-    pending:  events.filter(e => e.status === 'pending' || e.status === 'upcoming').length,
+    total: events.length,
+    pending: events.filter(e => e.status === 'pending' || e.status === 'upcoming').length,
     approved: events.filter(e => e.status === 'approved').length,
     rejected: events.filter(e => e.status === 'rejected').length,
   };
@@ -70,7 +69,8 @@ export default function ViewEvents() {
       e.title?.toLowerCase().includes(q) ||
       e.club?.name?.toLowerCase().includes(q) ||
       e.createdBy?.name?.toLowerCase().includes(q);
-    const matchStatus = statusFilter === 'all' || e.status === statusFilter;
+    const normalizedStatus = e.status === 'upcoming' ? 'pending' : e.status;
+    const matchStatus = statusFilter === 'all' || normalizedStatus === statusFilter;
     return matchSearch && matchStatus;
   });
 
@@ -97,10 +97,10 @@ export default function ViewEvents() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total',    value: stats.total,    bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '📅' },
-            { label: 'Pending',  value: stats.pending,  bg: 'bg-yellow-100', color: 'text-yellow-700', icon: '⏳' },
+            { label: 'Total', value: stats.total, bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '📅' },
+            { label: 'Pending', value: stats.pending, bg: 'bg-yellow-100', color: 'text-yellow-700', icon: '⏳' },
             { label: 'Approved', value: stats.approved, bg: 'bg-emerald-100', color: 'text-emerald-700', icon: '✅' },
-            { label: 'Rejected', value: stats.rejected, bg: 'bg-red-100',    color: 'text-red-700',    icon: '❌' },
+            { label: 'Rejected', value: stats.rejected, bg: 'bg-red-100', color: 'text-red-700', icon: '❌' },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
               <div className={`w-12 h-12 ${s.bg} ${s.color} rounded-xl flex items-center justify-center text-2xl`}>{s.icon}</div>
@@ -121,7 +121,7 @@ export default function ViewEvents() {
           />
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-gray-400">Status:</span>
-            {['all', 'pending', 'upcoming', 'approved', 'rejected'].map(s => (
+            {['all', 'pending', 'approved', 'rejected'].map(s => (
               <button key={s} onClick={() => setFilter(s)}
                 className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${statusFilter === s ? 'text-white border-transparent shadow-md' : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50'}`}
                 style={statusFilter === s ? { background: GRAD } : {}}>
@@ -147,78 +147,91 @@ export default function ViewEvents() {
             <div className="p-12 text-center text-gray-400 text-sm">No events found</div>
           ) : (
             <div className="divide-y divide-gray-100 max-h-[70vh] overflow-y-auto">
-              {filtered.map(event => (
-                <div key={event._id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
-                  <div className="grid grid-cols-12 items-center gap-2">
+              {filtered.map(event => {
+                const normalizedStatus = event.status === 'upcoming' ? 'pending' : event.status;
+                return (
+                  <div key={event._id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+                    <div className="grid grid-cols-12 items-center gap-2">
 
-                    {/* Event */}
-                    <div className="col-span-12 md:col-span-4 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0" style={{ background: GRAD }}>
-                        {event.title?.[0] || 'E'}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900 text-sm cursor-pointer hover:text-indigo-600" onClick={() => setSelected(event)}>
-                          {event.title}
+                      {/* Event */}
+                      <div className="col-span-12 md:col-span-4 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0" style={{ background: GRAD }}>
+                          {event.title?.[0] || 'E'}
                         </div>
-                        <div className="text-xs text-gray-400">by {event.createdBy?.name || '—'}</div>
+                        <div>
+                          <div
+                            className="font-semibold text-gray-900 text-sm cursor-pointer hover:text-indigo-600"
+                            onClick={() => setSelected(event)}
+                          >
+                            {event.title}
+                          </div>
+                          <div className="text-xs text-gray-400">by {event.createdBy?.name || '—'}</div>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Club */}
-                    <div className="col-span-6 md:col-span-3 flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-600">
-                        {event.club?.name?.[0]?.toUpperCase() || '?'}
+                      {/* Club */}
+                      <div className="col-span-6 md:col-span-3 flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-600">
+                          {event.club?.name?.[0]?.toUpperCase() || '?'}
+                        </div>
+                        <div>
+                          <div className="text-xs font-semibold text-gray-700">{event.club?.name || '—'}</div>
+                          <div className="text-xs text-gray-400">{event.club?.isActive ? '● Active' : '● Inactive'}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-xs font-semibold text-gray-700">{event.club?.name || '—'}</div>
-                        <div className="text-xs text-gray-400">{event.club?.isActive ? '● Active' : '● Inactive'}</div>
+
+                      {/* Date */}
+                      <div className="col-span-3 md:col-span-2 text-xs text-gray-500">
+                        {event.eventDate
+                          ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                          : '—'}
                       </div>
+
+                      {/* Status */}
+                      <div className="col-span-6 md:col-span-2">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${statusStyle(normalizedStatus)}`}>
+                          {normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1)}
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      {/* Actions */}
+                      <div className="col-span-6 md:col-span-1 flex justify-end gap-1">
+                        {normalizedStatus === 'rejected' ? (
+                          <span className=" text-sm font-semibold text-gray-500  rounded-lg">
+                            No Action
+                          </span>
+                        ) : (
+                          <>
+                            {normalizedStatus !== 'approved' && (
+                              <button
+                                onClick={() => setConfirm({ event, action: 'approve' })}
+                                disabled={actioningId === event._id}
+                                title="Approve"
+                                className="w-8 h-8 rounded-lg flex items-center justify-center border transition-all disabled:opacity-50 text-sm"
+                                style={{ backgroundColor: '#dcfce7', color: '#16a34a', borderColor: '#bbf7d0' }}
+                              >
+                                ✅
+                              </button>
+                            )}
+                            {normalizedStatus !== 'rejected' && (
+                              <button
+                                onClick={() => setConfirm({ event, action: 'reject' })}
+                                disabled={actioningId === event._id}
+                                title="Reject"
+                                className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 transition-all disabled:opacity-50 text-sm"
+                              >
+                                ❌
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+
                     </div>
-
-                    {/* Date */}
-                    <div className="col-span-3 md:col-span-2 text-xs text-gray-500">
-
-                      {event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
-
-                      {event.eventDate
-                        ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                        : '—'}
-
-                    </div>
-
-                    {/* Status */}
-                    <div className="col-span-6 md:col-span-2">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${statusStyle(event.status)}`}>
-                        {event.status?.charAt(0).toUpperCase() + event.status?.slice(1)}
-                      </span>
-                    </div>
-
-                    {/* Actions — show reverse button only */}
-                    <div className="col-span-6 md:col-span-1 flex justify-end gap-1">
-                      {event.status !== 'approved' && (
-                        <button
-                          onClick={() => setConfirm({ event, action: 'approve' })}
-                          disabled={actioningId === event._id}
-                          title="Approve"
-                          className="w-8 h-8 rounded-lg flex items-center justify-center border transition-all disabled:opacity-50 text-sm"
-                          style={{ backgroundColor: '#dcfce7', color: '#16a34a', borderColor: '#bbf7d0' }}>
-                          ✅
-                        </button>
-                      )}
-                      {event.status !== 'rejected' && (
-                        <button
-                          onClick={() => setConfirm({ event, action: 'reject' })}
-                          disabled={actioningId === event._id}
-                          title="Reject"
-                          className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 transition-all disabled:opacity-50 text-sm">
-                          ❌
-                        </button>
-                      )}
-                    </div>
-
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

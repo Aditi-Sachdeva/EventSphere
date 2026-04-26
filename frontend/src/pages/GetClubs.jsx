@@ -101,10 +101,20 @@ const GetClubs = () => {
                             <span className="text-gray-600 text-xs">▼</span>
                         </button>
                         {dropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg">
                                 {user.role === "admin" && (
-                                    <button onClick={() => navigate("/admin")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
-                                        Admin Dashboard
+                                    <>
+                                        <button onClick={() => navigate("/admin")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                            Admin Dashboard
+                                        </button>
+                                        <button onClick={() => navigate("/organizer")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                            Organizer Dashboard
+                                        </button>
+                                    </>
+                                )}
+                                {user.role === "organizer" && (
+                                    <button onClick={() => navigate("/organizer")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                        Organizer Dashboard
                                     </button>
                                 )}
                                 <button onClick={handleLogout} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">

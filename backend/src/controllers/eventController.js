@@ -198,7 +198,7 @@ async function handleViewEvent(req, res) {
 
         const event = await Event.findOne({
             _id: eventId,
-            status: "upcoming"
+            status: "approved"
         })
             .select("title description image eventDate location totalSeats availableSeats status registrations")
             .populate("club", "name")
@@ -226,7 +226,7 @@ async function handleViewEvent(req, res) {
 async function handleGetAllEvents(req, res) {
     try {
         const events = await Event.find({
-            status: "upcoming",
+            status: "approved",
             eventDate: { $gt: new Date() }
         })
             .select("title description image eventDate location totalSeats availableSeats status")
@@ -239,6 +239,8 @@ async function handleGetAllEvents(req, res) {
         return res.status(500).json({ msg: error.message });
     }
 }
+
+
 
 async function handleGetClubEvents(req, res) {
     try {

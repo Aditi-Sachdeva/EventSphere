@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios"; 
+import axios from "axios";
 
 import ViewUsers from "./ViewUsers";
 import CreateClub from "./CreateClub";
@@ -31,7 +31,7 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token");
 
       const usersRes = await axios.get("http://localhost:5000/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
@@ -214,14 +214,15 @@ function Dashboard({ stats, events, clubs }) {
                 </div>
                 <span
                   className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${ev.status === "approved"
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : ev.status === "pending"
-                      ? "bg-yellow-50 text-yellow-700 border-yellow-200"
-                      : "bg-red-50 text-red-600 border-red-200"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : ev.status === "pending"
+                        ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+                        : "bg-red-50 text-red-600 border-red-200"
                     }`}
                 >
-                  {ev.status}
+                  {ev.status.charAt(0).toUpperCase() + ev.status.slice(1)}
                 </span>
+
               </div>
             ))
           )}

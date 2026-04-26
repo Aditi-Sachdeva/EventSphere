@@ -45,16 +45,21 @@ async function handleJoinClub(req, res) {
 
 async function handleGetPublicClubs(req, res) {
   try {
-    const clubs = await Club.find({}, "name description isActive");
+    const clubs = await Club.find(
+      { isActive: true }, 
+      "name description isActive"
+    );
 
     return res.status(200).json({
-      msg: "Clubs fetched successfully",
+      msg: "Active clubs fetched successfully",
       clubs,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ msg: "Server Error" });
   }
 }
+
 
 
 async function handleApproveMember(req, res) {

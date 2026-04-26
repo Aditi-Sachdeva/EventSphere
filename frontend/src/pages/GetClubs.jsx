@@ -53,12 +53,12 @@ const GetClubs = () => {
     );
 
     const gradients = [
-        "from-pink-400 to-indigo-500",
-        "from-indigo-400 to-purple-500",
-        "from-pink-500 to-rose-400",
-        "from-violet-500 to-indigo-400",
-        "from-fuchsia-400 to-pink-500",
-        "from-blue-400 to-indigo-500",
+        { from: "#f472b6", to: "#6366f1" },
+        { from: "#818cf8", to: "#a855f7" },
+        { from: "#ec4899", to: "#fb7185" },
+        { from: "#8b5cf6", to: "#818cf8" },
+        { from: "#e879f9", to: "#ec4899" },
+        { from: "#60a5fa", to: "#6366f1" },
     ];
 
     if (!user) return null;
@@ -129,7 +129,7 @@ const GetClubs = () => {
             {/* Page Header */}
             <div className="pt-16">
                 <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-16 px-6 text-white text-center relative overflow-hidden">
-    <div className="absolute inset-0 bg-white/10"></div>
+                    <div className="absolute inset-0 bg-white/10"></div>
                     <div className="relative z-10">
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-3 drop-shadow">
                             Explore Clubs
@@ -207,53 +207,62 @@ const GetClubs = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {filteredClubs.map((club, index) => (
-                                <div
-                                    key={club._id}
-                                    className="bg-white border border-gray-100 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col"
-                                >
-                                    {/* Top color bar */}
-                                    <div className={`h-3 bg-gradient-to-r ${gradients[index % gradients.length]}`}></div>
+                            {filteredClubs.map((club, index) => {
+                                const gradient = gradients[index % gradients.length];
+                                return (
+                                    <div
+                                        key={club._id}
+                                        className="bg-white border border-gray-100 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col"
+                                    >
+                                        {/* Top color bar */}
+                                        <div
+                                            className="h-3"
+                                            style={{ background: `linear-gradient(to right, ${gradient.from}, ${gradient.to})` }}
+                                        ></div>
 
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <div className={`w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-br ${gradients[index % gradients.length]} text-white font-bold text-xl shadow-md`}>
-                                                {club.name.charAt(0).toUpperCase()}
+                                        <div className="p-6 flex flex-col flex-1">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div
+                                                    className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full text-white font-bold text-xl shadow-md"
+                                                    style={{ background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})` }}
+                                                >
+                                                    {club.name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold text-gray-800 text-base leading-tight">
+                                                        {club.name}
+                                                    </h4>
+                                                    {club.isActive ? (
+                                                        <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 mt-1 inline-block">
+                                                            Active
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-xs font-medium text-red-500 bg-red-50 border border-red-200 rounded-full px-2 py-0.5 mt-1 inline-block">
+                                                            Inactive
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="font-semibold text-gray-800 text-base leading-tight">
-                                                    {club.name}
-                                                </h4>
-                                                {club.isActive ? (
-                                                    <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 mt-1 inline-block">
-                                                        Active
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-xs font-medium text-red-500 bg-red-50 border border-red-200 rounded-full px-2 py-0.5 mt-1 inline-block">
-                                                        Inactive
-                                                    </span>
-                                                )}
-                                            </div>
+
+                                            <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 flex-1">
+                                                {club.description || "No description available for this club."}
+                                            </p>
+
+                                            {/* CTA — always navigates to detail page */}
+                                            <Link
+                                                to={`/clubs/${club._id}`}
+                                                className={`block w-full mt-4 py-2 rounded-full text-sm font-semibold text-center transition hover:scale-[1.02] hover:shadow-md ${
+                                                    club.isActive
+                                                        ? "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow"
+                                                        : "bg-gray-100 text-gray-500 border border-gray-200"
+                                                }`}
+                                            >
+                                                {club.isActive ? "View & Join →" : "View Details"}
+                                            </Link>
                                         </div>
-
-                                        <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 flex-1">
-                                            {club.description || "No description available for this club."}
-                                        </p>
-
-                                        {/* CTA — always navigates to detail page */}
-                                        <Link
-                                            to={`/clubs/${club._id}`}
-                                            className={`block w-full mt-4 py-2 rounded-full text-sm font-semibold text-center transition hover:scale-[1.02] hover:shadow-md ${
-                                                club.isActive
-                                                    ? "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow"
-                                                    : "bg-gray-100 text-gray-500 border border-gray-200"
-                                            }`}
-                                        >
-                                            {club.isActive ? "View & Join →" : "View Details"}
-                                        </Link>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>

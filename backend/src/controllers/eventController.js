@@ -224,20 +224,29 @@ async function handleViewEvent(req, res) {
 }
 
 async function handleGetAllEvents(req, res) {
-    try {
-        const events = await Event.find({
-            status: "approved",
-            eventDate: { $gt: new Date() }
-        })
-            .select("title description image eventDate location totalSeats availableSeats status")
-            .populate("club", "name")
-            .sort({ eventDate: 1 });
+  try {
+    const events = await Event.find({
+      status: "approved",
+      eventDate: { $gt: new Date() }
+    })
+      .select("title description image eventDate location totalSeats availableSeats status club")
+      .populate({
+        path: "club",
+        select: "name isActive",
+        match: { isActive: true } 
+      })
+      .sort({ eventDate: 1 });
 
-        return res.status(200).json({ msg: "Upcoming events fetched successfully", events });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ msg: error.message });
-    }
+    const activeClubEvents = events.filter(ev => ev.club);
+
+    return res.status(200).json({
+      msg: "Upcoming events fetched successfully",
+      events: activeClubEvents
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: error.message });
+  }
 }
 
 

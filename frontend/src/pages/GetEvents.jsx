@@ -91,12 +91,12 @@ const GetEvents = () => {
     };
 
     const gradients = [
-        "from-pink-400 to-indigo-500",
-        "from-indigo-400 to-purple-500",
-        "from-rose-400 to-pink-500",
-        "from-violet-500 to-indigo-400",
-        "from-fuchsia-400 to-pink-500",
-        "from-blue-400 to-indigo-500",
+        { from: "#f472b6", to: "#6366f1" },
+        { from: "#818cf8", to: "#a855f7" },
+        { from: "#fb7185", to: "#ec4899" },
+        { from: "#8b5cf6", to: "#818cf8" },
+        { from: "#e879f9", to: "#ec4899" },
+        { from: "#60a5fa", to: "#6366f1" },
     ];
 
     if (!user) return null;
@@ -156,9 +156,8 @@ const GetEvents = () => {
 
             {/* Page Header */}
             <div className="pt-16">
-                
-                    <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-16 px-6 text-white text-center relative overflow-hidden">
-    <div className="absolute inset-0 bg-white/10"></div>
+                <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-16 px-6 text-white text-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-white/10"></div>
                     <div className="relative z-10">
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-3 drop-shadow">
                             Upcoming Events
@@ -273,6 +272,7 @@ const GetEvents = () => {
                                 const percent = seatPercent(event);
                                 const registered = isMyEvent(event._id);
                                 const isFull = event.availableSeats === 0;
+                                const gradient = gradients[index % gradients.length];
 
                                 return (
                                     <div
@@ -280,11 +280,22 @@ const GetEvents = () => {
                                         className="bg-white border border-gray-100 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col"
                                     >
                                         {/* Banner */}
-                                        <div className={`relative h-36 bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center`}>
-                                            <span className="text-white text-5xl font-extrabold opacity-10 select-none">
-                                                {event.title.charAt(0).toUpperCase()}
-                                            </span>
-                                            {event.club?.name && (
+                                        <div
+                                            className="relative h-36 flex items-center justify-center overflow-hidden"
+                                            style={{ background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})` }}
+                                        >
+                                            {event.image ? (
+                                                <img
+                                                    src={event.image}
+                                                    alt={event.title}
+                                                    className="absolute inset-0 w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <span className="text-white text-8xl font-extrabold opacity-20 select-none">
+                                                    {event.title.charAt(0).toUpperCase()}
+                                                </span>
+                                            )}
+                                            {event.club?.name && event.club.name.trim() !== "" && (
                                                 <span className="absolute top-3 left-3 bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm border border-white/30">
                                                     {event.club.name}
                                                 </span>

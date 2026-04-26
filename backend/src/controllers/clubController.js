@@ -196,6 +196,42 @@ async function handleGetClubById(req, res) {
     }
 }
 
+async function handleGetPendingMembers(req, res) {
+    try {
+        const { clubId } = req.params;
+
+        const club = await Club.findById(clubId)
+            .populate("members.user", "name email");
+
+        if (!club) {
+            return res.status(404).json({ msg: "Club not found" });
+        }
+
+        const isAuthorized =
+            req.user.role === "admin" ||
+            club.mainOrganizer.equals(req.user._id) ||
+            club.organizers.some(id => id.equals(req.user._id));
+
+        if (!isAuthorized) {
+            return res.status(403).json({ msg: "Access denied" });
+        }
+
+        const pending = club.members.filter(m => m.status === "pending");
+        const approved = club.members.filter(m => m.status === "approved");
+
+        return res.status(200).json({
+            msg: "Members fetched successfully",
+            pending,
+            approved,
+            clubName: club.name,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Server Error" });
+    }
+}
+
 
 module.exports = {
     handleJoinClub,
@@ -203,5 +239,8 @@ module.exports = {
     handleApproveMember,
     handleRemoveMember,
     handleGetClubById,
+    handleGetPendingMembers,
+    
+
 
 }

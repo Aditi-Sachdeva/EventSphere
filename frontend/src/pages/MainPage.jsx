@@ -106,23 +106,47 @@ const MainPage = () => {
                         </button>
 
                         {dropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                                {user.role === "admin" && (
-                                    <button
-                                        onClick={() => navigate("/admin")}
-                                        className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-                                    >
-                                        Admin Dashboard
-                                    </button>
-                                )}
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                    Logout
-                                </button>
-                            </div>
-                        )}
+  <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg">
+
+    {/* ADMIN → show both dashboards */}
+    {user.role === "admin" && (
+      <>
+        <button
+          onClick={() => navigate("/admin")}
+          className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          Admin Dashboard
+        </button>
+
+        <button
+          onClick={() => navigate("/organizer")}
+          className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          Organizer Dashboard
+        </button>
+      </>
+    )}
+
+    {/* ONLY ORGANIZER */}
+    {user.role === "organizer" && (
+      <button
+        onClick={() => navigate("/organizer")}
+        className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+      >
+        Organizer Dashboard
+      </button>
+    )}
+
+    {/* LOGOUT (for all users) */}
+    <button
+      onClick={handleLogout}
+      className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+    >
+      Logout
+    </button>
+  </div>
+)}
+                        
                     </div>
                 </div>
             </nav>

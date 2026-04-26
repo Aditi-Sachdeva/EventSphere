@@ -47,3 +47,6 @@ router.patch("/:eventId/unregister", checkAuth, handleUnregisterEvent);
 // router.get("/:eventId/attendees", checkAuth, handleGetEventAttendees);
 
 module.exports = router;
+
+
+

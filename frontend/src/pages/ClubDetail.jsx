@@ -103,15 +103,15 @@ const ClubDetail = () => {
     };
 
     const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    const d = new Date(dateStr);
-    if (isNaN(d)) return "—";
-    return d.toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-};
+        if (!dateStr) return "—";
+        const d = new Date(dateStr);
+        if (isNaN(d)) return "—";
+        return d.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+    };
 
     if (!user) return null;
 
@@ -306,11 +306,10 @@ const ClubDetail = () => {
                                                         </p>
                                                     </div>
                                                     {/* Status pill */}
-                                                    <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${
-                                                        new Date(event.eventDate) >= new Date()
+                                                    <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${new Date(event.eventDate) >= new Date()
                                                             ? "bg-green-50 text-green-600 border-green-200"
                                                             : "bg-gray-50 text-gray-400 border-gray-200"
-                                                    }`}>
+                                                        }`}>
                                                         {new Date(event.eventDate) >= new Date() ? "Upcoming" : "Past"}
                                                     </span>
                                                 </Link>

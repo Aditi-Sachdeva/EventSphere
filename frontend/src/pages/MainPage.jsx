@@ -76,21 +76,12 @@ const MainPage = () => {
                         <Link to="/mainpage" className="px-3 py-1 text-sm bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-md font-semibold shadow-sm">
                             Home
                         </Link>
-
-                        <Link
-                            to="/events"
-                            
-                            className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
-                        >
+                        <Link to="/events" className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent">
                             Events
                         </Link>
-
-                       <Link
-  to="/clubs"
-  className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
->
-  Clubs
-</Link>
+                        <Link to="/clubs" className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent">
+                            Clubs
+                        </Link>
                     </div>
 
                     <div className="relative">
@@ -106,73 +97,48 @@ const MainPage = () => {
                         </button>
 
                         {dropdownOpen && (
-  <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg">
-
-    {/* ADMIN → show both dashboards */}
-    {user.role === "admin" && (
-      <>
-        <button
-          onClick={() => navigate("/admin")}
-          className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          Admin Dashboard
-        </button>
-
-        <button
-          onClick={() => navigate("/organizer")}
-          className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          Organizer Dashboard
-        </button>
-      </>
-    )}
-
-    {/* ONLY ORGANIZER */}
-    {user.role === "organizer" && (
-      <button
-        onClick={() => navigate("/organizer")}
-        className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-      >
-        Organizer Dashboard
-      </button>
-    )}
-
-    {/* LOGOUT (for all users) */}
-    <button
-      onClick={handleLogout}
-      className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-    >
-      Logout
-    </button>
-  </div>
-)}
-                        
+                            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg">
+                                {user.role === "admin" && (
+                                    <>
+                                        <button onClick={() => navigate("/admin")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                            Admin Dashboard
+                                        </button>
+                                        <button onClick={() => navigate("/organizer")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                            Organizer Dashboard
+                                        </button>
+                                    </>
+                                )}
+                                {user.role === "organizer" && (
+                                    <button onClick={() => navigate("/organizer")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                        Organizer Dashboard
+                                    </button>
+                                )}
+                                <button onClick={handleLogout} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                                    Logout
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>
 
-            {/* Hero Section*/}
+            {/* Hero Section */}
             <section className="relative h-[560px] md:h-[730px] overflow-hidden">
                 <img src={heroImage} alt="Hero" className="w-full h-full object-cover object-center md:object-top" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-pink-500/20 to-indigo-600/20"></div>
-
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
                     <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-lg">
-                        Discover <span className="bg-gradient-to-r from-pink-400 to-indigo-500 bg-clip-text text-transparent">Events</span>.
-                        <br />
+                        Discover <span className="bg-gradient-to-r from-pink-400 to-indigo-500 bg-clip-text text-transparent">Events</span>.<br />
                         Connect With <span className="bg-gradient-to-r from-indigo-400 to-pink-500 bg-clip-text text-transparent">Clubs</span>.
                     </h2>
-
                     <p className="text-base md:text-lg text-gray-200 mb-8 max-w-2xl drop-shadow-md">
                         Explore exciting campus activities and join communities that match your passion.
                     </p>
-
                     <div className="flex justify-center gap-6">
                         <button onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })}
                             className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full font-semibold shadow-md hover:scale-[1.05] transition">
                             Browse Events
                         </button>
-
                         <button onClick={() => document.getElementById("clubs-section")?.scrollIntoView({ behavior: "smooth" })}
                             className="px-6 py-2.5 border border-white rounded-full font-semibold hover:bg-white hover:text-indigo-600 transition">
                             Explore Clubs
@@ -181,41 +147,34 @@ const MainPage = () => {
                 </div>
             </section>
 
-            {/* Event Section*/}
-            <section id="events-section" className="py-16 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30">
+            {/* Event Section */}
+            <section id="events-section" className="pt-10 pb-8 bg-gradient-to-b from-gray-50 via-pink-50/30 to-indigo-50/30">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
                             Upcoming Events
                         </h3>
                     </div>
-
                     {loading ? (
                         <p className="text-gray-600">Loading events...</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
                             {events.slice(0, 4).map((event) => (
-                                <div key={event._id}
-                                    className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition flex flex-col h-full">
-
+                                <Link
+                                    to={`/events/${event._id}`}
+                                    key={event._id}
+                                    className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition flex flex-col h-full"
+                                >
                                     {event.image ? (
-                                        <img
-                                            src={event.image}
-                                            alt="event"
-                                            className="h-32 w-full object-cover rounded-lg mb-4"
-                                        />
+                                        <img src={event.image} alt="event" className="h-32 w-full object-cover rounded-lg mb-4" />
                                     ) : (
                                         <div className="h-32 flex items-center justify-center text-center px-3 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-lg mb-4">
-                                            <span className="text-2xl font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent line-clamp-2">
+                                            <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent line-clamp-2">
                                                 {event.title}
                                             </span>
                                         </div>
                                     )}
-
-                                    <h4 className="font-semibold text-lg mb-2 text-gray-800">
-                                        {event.title}
-                                    </h4>
-
+                                    <h4 className="font-semibold text-lg mb-2 text-gray-800">{event.title}</h4>
                                     <p className="text-sm text-gray-500 mb-3 tabular-nums">
                                         {event.eventDate
                                             ? new Date(event.eventDate).toLocaleDateString("en-GB", {
@@ -225,38 +184,30 @@ const MainPage = () => {
                                             })
                                             : "Date not specified"}
                                     </p>
-
-                                    <div className="mt-auto">
-                                        <Link to="/mainpage"
-                                            className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
-                                            View Details →
-                                        </Link>
+                                    <div className="mt-auto text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                                        View Details →
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     )}
                 </div>
             </section>
 
-            {/* Club Section*/}
-            <section
-                id="clubs-section"
-                className="py-16 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-100"
-            >
+            {/* Club Section */}
+            <section id="clubs-section" className="pt-10 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-100">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-500 to-pink-600 bg-clip-text text-transparent">
                             Popular Clubs
                         </h3>
                         <Link
-                            to="/mainpage"
+                            to="/clubs"
                             className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
                         >
                             View All →
                         </Link>
                     </div>
-
                     {loading ? (
                         <p className="text-gray-600">Loading clubs...</p>
                     ) : clubs.length === 0 ? (
@@ -264,7 +215,8 @@ const MainPage = () => {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {clubs.slice(0, 4).map((club) => (
-                                <div
+                                <Link
+                                    to={`/clubs/${club._id}`}
                                     key={club._id}
                                     className="bg-white border border-gray-200 rounded-2xl shadow-lg shadow-indigo-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
                                 >
@@ -275,13 +227,12 @@ const MainPage = () => {
                                     <p className="text-sm text-gray-500 mt-2 line-clamp-2">
                                         {club.description || "No description available"}
                                     </p>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     )}
                 </div>
             </section>
-
 
             {/* Footer */}
             <footer className="mt-20 bg-gray-100 border-t border-gray-300 shadow-inner">
@@ -301,19 +252,17 @@ const MainPage = () => {
                                 discover events, join communities, and stay connected effortlessly.
                             </p>
                         </div>
-
                         <div>
                             <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent mb-4 ml-15">
                                 Explore
                             </h3>
                             <ul className="space-y-3 text-sm text-gray-800 ml-15">
                                 <li><Link to="/mainpage" className="hover:text-pink-600">Home</Link></li>
-                                <li><Link to="/mainpage" onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-pink-600">Events</Link></li>
-                                <li><Link to="/mainpage" onClick={() => document.getElementById("clubs-section")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-pink-600">Clubs</Link></li>
+                                <li><Link to="/events" className="hover:text-pink-600">Events</Link></li>
+                                <li><Link to="/clubs" className="hover:text-pink-600">Clubs</Link></li>
                                 <li><Link to="/signup" className="hover:text-pink-600">Register</Link></li>
                             </ul>
                         </div>
-
                         <div>
                             <h3 className="text-lg font-semibold bg-gradient-to-r from-indigo-500 to-pink-600 bg-clip-text text-transparent mb-4">
                                 Platform
@@ -326,8 +275,6 @@ const MainPage = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom */}
                 <div className="bg-gray-200 border-t border-gray-300">
                     <div className="max-w-6xl mx-auto px-6 py-6 text-center text-sm text-gray-800 tracking-wide">
                         <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent font-semibold">
@@ -342,3 +289,4 @@ const MainPage = () => {
 };
 
 export default MainPage;
+

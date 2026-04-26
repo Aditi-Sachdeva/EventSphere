@@ -82,13 +82,13 @@ export default function SignUp() {
               Home
             </Link>
             <Link
-              to="/events"
+              to="/login"
               className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Events
             </Link>
             <Link
-              to="/clubs"
+              to="/login"
               className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
             >
               Clubs

@@ -78,20 +78,19 @@ const MainPage = () => {
                         </Link>
 
                         <Link
-                            to="/mainpage"
-                            onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })}
+                            to="/events"
+                            
                             className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
                         >
                             Events
                         </Link>
 
-                        <Link
-                            to="/mainpage"
-                            onClick={() => document.getElementById("clubs-section")?.scrollIntoView({ behavior: "smooth" })}
-                            className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
-                        >
-                            Clubs
-                        </Link>
+                       <Link
+  to="/clubs"
+  className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent"
+>
+  Clubs
+</Link>
                     </div>
 
                     <div className="relative">

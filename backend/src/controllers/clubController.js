@@ -147,6 +147,54 @@ async function handleRemoveMember(req, res) {
         return res.status(500).json({ msg: "Server Error" });
     }
 }
+async function handleGetClubById(req, res) {
+    try {
+        const { clubId } = req.params;
+ 
+        const club = await Club.findById(clubId)
+            .populate("mainOrganizer", "name email")
+            .populate("organizers", "name email");
+ 
+        if (!club) {
+            return res.status(404).json({ msg: "Club not found" });
+        }
+ 
+        // Count only approved members
+        const approvedMemberCount = club.members.filter(
+            (m) => m.status === "approved"
+        ).length;
+ 
+        // Check if requesting user is already a member/pending
+        // req.user may be undefined if route has no checkAuth — handle gracefully
+        let membershipStatus = null;
+        if (req.user) {
+            const existing = club.members.find((m) =>
+                m.user.equals(req.user._id)
+            );
+            if (existing) {
+                membershipStatus = existing.status; // "pending" | "approved"
+            }
+        }
+ 
+        return res.status(200).json({
+            msg: "Club fetched successfully",
+            club: {
+                _id: club._id,
+                name: club.name,
+                description: club.description,
+                isActive: club.isActive,
+                mainOrganizer: club.mainOrganizer,
+                organizers: club.organizers,
+                approvedMemberCount,
+                createdAt: club.createdAt,
+            },
+            membershipStatus,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Server Error" });
+    }
+}
 
 
 module.exports = {
@@ -154,7 +202,6 @@ module.exports = {
     handleGetPublicClubs,
     handleApproveMember,
     handleRemoveMember,
+    handleGetClubById,
+
 }
-
-
-

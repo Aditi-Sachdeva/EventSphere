@@ -61,18 +61,38 @@ export default function ClubEvents() {
             <p className="text-gray-500 text-sm mt-1">All events organized by {clubName || "your club"}</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-5 mb-8">
-            {[
-              { label: "Total Events",        value: clubEvents.length },
-              { label: "Upcoming",            value: clubEvents.filter(e => (e.status || "upcoming") === "upcoming").length },
-              { label: "Total Registrations", value: clubEvents.reduce((s, e) => s + (e.registrations?.length ?? 0), 0) },
-            ].map(({ label, value }) => (
-              <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">{label}</p>
-                <p className="text-3xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">{value}</p>
-              </div>
-            ))}
-          </div>
+         <div className="grid grid-cols-3 gap-5 mb-8">
+  {[
+    {
+      label: "Total Events",
+    value: clubEvents.length,
+  },
+  {
+    label: "Upcoming",
+    value: clubEvents.filter(
+      e => (e.status || "").toLowerCase() === "approved"
+    ).length,
+  },
+  {
+    label: "Pending",
+    value: clubEvents.filter(
+      e => (e.status || "").toLowerCase() !== "approved"
+    ).length,
+  },
+  ].map(({ label, value }) => (
+    <div
+      key={label}
+      className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5"
+    >
+      <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">
+        {label}
+      </p>
+      <p className="text-3xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+        {value}
+      </p>
+    </div>
+  ))}
+</div>
 
           <div className="flex gap-2 mb-6">
             {["all", "upcoming", "ongoing", "cancelled"].map(f => (

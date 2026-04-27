@@ -16,14 +16,11 @@ function isValidId(id) {
 
 async function handleCreateEvent(req, res) {
     try {
-        const { title, description, clubId, eventDate, location, totalSeats, image } = req.body;
+        const { title, description, eventDate, location, totalSeats, image } = req.body;
 
-        if (!title || !description || !clubId || !eventDate || !location || !totalSeats) {
+        // Validate required fields (no clubId here)
+        if (!title || !description || !eventDate || !location || !totalSeats) {
             return res.status(400).json({ msg: "All required fields must be provided" });
-        }
-
-        if (!isValidId(clubId)) {
-            return res.status(400).json({ msg: "Invalid club ID" });
         }
 
         const seats = Number(totalSeats);
@@ -32,28 +29,31 @@ async function handleCreateEvent(req, res) {
         }
 
         const eventTime = new Date(eventDate);
-
         if (isNaN(eventTime.getTime())) {
             return res.status(400).json({ msg: "Invalid event date format" });
         }
-
         if (eventTime <= new Date()) {
             return res.status(400).json({ msg: "Event date and time must be in the future" });
         }
 
-        const club = await Club.findById(clubId);
+        // Organizer’s club comes from req.user
+        console.log("req.user:", req.user);
+
+        const club = await Club.findById(req.user.club);
         if (!club || !club.isActive) {
             return res.status(404).json({ msg: "Club not found or inactive" });
         }
 
-        if (!isAuthorized(req.user, club)) {
+        // Authorization check
+        if (!club.mainOrganizer.equals(req.user._id) &&
+            !club.organizers.some(id => id.equals(req.user._id))) {
             return res.status(403).json({ msg: "Access denied" });
         }
 
         const event = await Event.create({
             title,
             description,
-            club: clubId,
+            club: club._id,
             createdBy: req.user._id,
             eventDate: eventTime,
             location,
@@ -224,29 +224,29 @@ async function handleViewEvent(req, res) {
 }
 
 async function handleGetAllEvents(req, res) {
-  try {
-    const events = await Event.find({
-      status: "approved",
-      eventDate: { $gt: new Date() }
-    })
-      .select("title description image eventDate location totalSeats availableSeats status club")
-      .populate({
-        path: "club",
-        select: "name isActive",
-        match: { isActive: true } 
-      })
-      .sort({ eventDate: 1 });
+    try {
+        const events = await Event.find({
+            status: "approved",
+            eventDate: { $gt: new Date() }
+        })
+            .select("title description image eventDate location totalSeats availableSeats status club")
+            .populate({
+                path: "club",
+                select: "name isActive",
+                match: { isActive: true }
+            })
+            .sort({ eventDate: 1 });
 
-    const activeClubEvents = events.filter(ev => ev.club);
+        const activeClubEvents = events.filter(ev => ev.club);
 
-    return res.status(200).json({
-      msg: "Upcoming events fetched successfully",
-      events: activeClubEvents
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: error.message });
-  }
+        return res.status(200).json({
+            msg: "Upcoming events fetched successfully",
+            events: activeClubEvents
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: error.message });
+    }
 }
 
 
@@ -259,12 +259,8 @@ async function handleGetClubEvents(req, res) {
             return res.status(400).json({ msg: "Invalid club ID" });
         }
 
-        const events = await Event.find({
-            club: clubId,
-            status: "upcoming",
-            eventDate: { $gt: new Date() }
-        })
-            .select("title description image eventDate location totalSeats availableSeats status")
+        const events = await Event.find({ club: clubId })
+            .select("title description image eventDate location totalSeats availableSeats status registrations")
             .populate("club", "name")
             .sort({ eventDate: 1 });
 
@@ -274,6 +270,7 @@ async function handleGetClubEvents(req, res) {
         return res.status(500).json({ msg: error.message });
     }
 }
+
 
 async function handleGetMyEvents(req, res) {
     try {

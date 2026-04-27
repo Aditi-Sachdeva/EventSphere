@@ -52,48 +52,41 @@ async function handleSignup(req, res) {
 
 
 async function handleLogin(req, res) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ msg: "All fields are required" });
 
-    try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ msg: "User not found" });
 
-        const { email, password } = req.body;
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ msg: "Invalid Credentials" });
 
-        if (!email || !password) {
-            return res.status(400).json({ msg: "All fields are required" });
-        }
+    // ✅ Embed club in JWT
+    const token = jwt.sign(
+      { id: user._id, role: user.role, club: user.club },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-        if (!validator.isEmail(email)) {
-            return res.status(400).json({ msg: "Invalid email format" });
-        }
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(404).json({ msg: "User not found" });
-        }
-
-        const match = await bcrypt.compare(password, user.password);
-
-        if (!match) {
-            return res.status(401).json({ msg: "Invalid Credentials" });
-        }
-
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-        return res.status(200).json({
-            msg: "Login Successfull",
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-            }
-        });
-    }
-    catch (error) {
-        return res.status(500).json({ msg: "Server Error" });
-    }
+    return res.status(200).json({
+      msg: "Login Successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        club: user.club, // ✅ include club in response
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ msg: "Server Error" });
+  }
 }
+
+
+
 
 
 async function handleLogout(req, res) {

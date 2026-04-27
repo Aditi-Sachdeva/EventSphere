@@ -25,7 +25,7 @@ router.get('/allEvents', handleGetAllEvents);
 // router.get("/me", checkAuth, handleGetMyEvents);
 router.get("/me", checkAuth, handleGetMyRegistrations);
 
-router.post("/", checkAuth,checkRole(["admin"]), handleCreateEvent);
+router.post("/", checkAuth, handleCreateEvent);
 
 router.patch("/:eventId", checkAuth, handleEditEvent);
 
@@ -35,7 +35,7 @@ router.get("/:eventId",handleViewEvent);
 
 router.get("/", handleGetAllEvents);
 
-router.get("/club/:clubId", handleGetClubEvents);
+router.get("/club/:clubId",checkAuth, handleGetClubEvents);
 
 
 router.post("/:eventId/register", checkAuth, handleRegisterEvent);

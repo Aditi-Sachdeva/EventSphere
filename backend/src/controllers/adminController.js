@@ -4,9 +4,7 @@ const User = require('./../models/User');
 const Event = require('./../models/Event');
 
 async function handleCreateClub(req, res) {
-
   try {
-
     const { name, description, mainOrganizerId } = req.body;
 
     if (!name || !description || !mainOrganizerId) {
@@ -23,11 +21,12 @@ async function handleCreateClub(req, res) {
       return res.status(404).json({ msg: "User does not exist" });
     }
 
+    // Promote user to organizer if needed
     if (user.role === "user") {
       user.role = "organizer";
-      await user.save();
     }
 
+    // ✅ Create the club
     const club = await Club.create({
       name,
       description,
@@ -36,15 +35,16 @@ async function handleCreateClub(req, res) {
       isActive: true
     });
 
-    return res.status(201).json({ msg: "Club Created Successfully", club });
+    // ✅ Update the user’s club field
+    user.club = club._id;
+    await user.save();
 
-  }
-  catch (error) {
+    return res.status(201).json({ msg: "Club Created Successfully", club });
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ msg: "Server Error" });
   }
 }
-
 
 
 async function handleGetAllClubs(req, res) {
@@ -64,11 +64,8 @@ async function handleGetAllClubs(req, res) {
   }
 }
 
-
 async function handleAddOrganizer(req, res) {
-
   try {
-
     const { clubId, userId } = req.body;
 
     if (!clubId || !userId) {
@@ -76,39 +73,33 @@ async function handleAddOrganizer(req, res) {
     }
 
     const club = await Club.findById(clubId);
-    if (!club) {
-      return res.status(404).json({ msg: "Club does not exist" });
-    }
-
-    if (!club.isActive) {
-      return res.status(400).json({ msg: "Club is inactive" });
-    }
+    if (!club) return res.status(404).json({ msg: "Club does not exist" });
+    if (!club.isActive) return res.status(400).json({ msg: "Club is inactive" });
 
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ msg: "User does not exist" });
-    }
+    if (!user) return res.status(404).json({ msg: "User does not exist" });
 
     if (club.organizers.some(id => id.equals(user._id))) {
       return res.status(400).json({ msg: "Already an organizer" });
     }
 
+    // ✅ Promote and tie user to club
     if (user.role === "user") {
       user.role = "organizer";
-      await user.save();
     }
+    user.club = club._id;   // <-- FIX
+    await user.save();
 
     club.organizers.push(user._id);
     await club.save();
 
     return res.status(200).json({ msg: "Organizer added successfully", club });
-
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ msg: "Server Error" });
   }
 }
+
 
 
 async function handleDeactivateClub(req, res) {

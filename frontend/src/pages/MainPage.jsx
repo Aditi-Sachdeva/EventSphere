@@ -119,7 +119,7 @@ const MainPage = () => {
                             </div>
                         )}
 
-                        
+
                     </div>
                 </div>
             </nav>
@@ -156,6 +156,12 @@ const MainPage = () => {
                         <h3 className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
                             Upcoming Events
                         </h3>
+                        <Link
+                            to="/events"
+                            className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition"
+                        >
+                            View All →
+                        </Link>
                     </div>
                     {loading ? (
                         <p className="text-gray-600">Loading events...</p>
@@ -168,7 +174,11 @@ const MainPage = () => {
                                     className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition flex flex-col h-full"
                                 >
                                     {event.image ? (
-                                        <img src={event.image} alt="event" className="h-32 w-full object-cover rounded-lg mb-4" />
+                                        <img
+                                            src={event.image}
+                                            alt="event"
+                                            className="h-32 w-full object-cover rounded-lg mb-4"
+                                        />
                                     ) : (
                                         <div className="h-32 flex items-center justify-center text-center px-3 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-lg mb-4">
                                             <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent line-clamp-2">
@@ -176,7 +186,9 @@ const MainPage = () => {
                                             </span>
                                         </div>
                                     )}
-                                    <h4 className="font-semibold text-lg mb-2 text-gray-800">{event.title}</h4>
+                                    <h4 className="font-semibold text-lg mb-2 text-gray-800">
+                                        {event.title}
+                                    </h4>
                                     <p className="text-sm text-gray-500 mb-3 tabular-nums">
                                         {event.eventDate
                                             ? new Date(event.eventDate).toLocaleDateString("en-GB", {
@@ -195,6 +207,7 @@ const MainPage = () => {
                     )}
                 </div>
             </section>
+
 
             {/* Club Section */}
             <section id="clubs-section" className="pt-10 bg-gradient-to-b from-indigo-50/30 via-pink-50/30 to-gray-100">

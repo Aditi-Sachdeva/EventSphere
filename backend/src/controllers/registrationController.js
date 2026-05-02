@@ -68,7 +68,6 @@ async function handleUnregisterEvent(req, res) {
         const updatedEvent = await Event.findOneAndUpdate(
             {
                 _id: eventId,
-                status: "upcoming",
                 eventDate: { $gt: new Date() },
                 "registrations.user": req.user._id
             },

@@ -127,7 +127,7 @@ export default function ClubEvents() {
                     </div>
                     <div className="mt-auto flex gap-2">
                       <Link to={`/events/${event._id}`} className="flex-1 text-center py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:border-pink-300 hover:text-pink-600 transition">View</Link>
-                      <Link to={`/events/${event._id}/edit`} className="flex-1 text-center py-2 rounded-xl text-xs font-semibold text-white hover:opacity-90 transition" style={{ background: GRAD }}>Manage</Link>
+                      {/* <Link to={`/events/${event._id}/edit`} className="flex-1 text-center py-2 rounded-xl text-xs font-semibold text-white hover:opacity-90 transition" style={{ background: GRAD }}>Manage</Link> */}
                     </div>
                   </div>
                 </div>

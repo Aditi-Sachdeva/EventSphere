@@ -31,7 +31,12 @@ export default function Login() {
       setTimeout(() => navigate("/mainpage"), 1000);
     } catch (err) {
       setIsError(true);
-      setMessage(err.response?.data?.msg || "Login failed");
+
+      if (err.response?.status === 429) {
+        setMessage(err.response?.data?.msg || "Too many attempts. Please try again later.");
+      } else {
+        setMessage(err.response?.data?.msg || "Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -119,7 +124,7 @@ export default function Login() {
               </div>
             </div>
           </div>
-          
+
 
           {/* Form */}
           <div className="flex justify-center">

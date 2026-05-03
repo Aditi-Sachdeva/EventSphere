@@ -8,15 +8,18 @@ const {
     handleRemoveMember,
     handleGetClubById,
     handleGetPendingMembers,
+    handleGetMyClubs,
 } = require("../controllers/clubController");
 
 const { checkAuth } = require("../middlewares/authMiddleware");
 
 router.get('/allClubs', handleGetPublicClubs);
+router.get("/me", checkAuth, handleGetMyClubs);        // ✅ BEFORE /:clubId
 router.post('/join', checkAuth, handleJoinClub);
-router.post('/approve', checkAuth, handleApproveMember);   // ← was missing
-router.post('/remove', checkAuth, handleRemoveMember);     // ← was missing
+router.post('/approve', checkAuth, handleApproveMember);
+router.post('/remove', checkAuth, handleRemoveMember);
 router.get('/:clubId/pending', checkAuth, handleGetPendingMembers);
-router.get('/:clubId', checkAuth, handleGetClubById);
+router.get('/:clubId', checkAuth, handleGetClubById);  // after
+
 
 module.exports = router;

@@ -2,8 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const tabs = [
+    { key: "all", label: "All Clubs" },
+    { key: "my", label: "My Clubs" },
+];
+
 const GetClubs = () => {
+    const [activeTab, setActiveTab] = useState("all");
     const [clubs, setClubs] = useState([]);
+    const [myClubs, setMyClubs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [user, setUser] = useState(null);
@@ -11,14 +18,18 @@ const GetClubs = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        } else {
-            navigate("/login");
-        }
+     const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+
         fetchClubs();
-    }, []);
+        fetchMyClubs(); // ✅ call AFTER user is set
+    } else {
+        navigate("/login");
+    }
+}, []);
 
     const fetchClubs = async () => {
         try {
@@ -28,6 +39,17 @@ const GetClubs = () => {
             console.error("Error fetching clubs:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchMyClubs = async () => {
+        try {
+            const res = await axios.get("http://localhost:5000/api/club/me", {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setMyClubs(res.data.clubs || []);
+        } catch (err) {
+            console.error("Error fetching my clubs:", err);
         }
     };
 
@@ -47,10 +69,12 @@ const GetClubs = () => {
         }
     };
 
-    const filteredClubs = clubs.filter((club) =>
+    const displayedClubs = (activeTab === "all" ? clubs : myClubs).filter((club) =>
         club.name.toLowerCase().includes(search.toLowerCase()) ||
         (club.description || "").toLowerCase().includes(search.toLowerCase())
     );
+
+    const isMyClub = (clubId) => myClubs.some((c) => c._id === clubId);
 
     const gradients = [
         { from: "#f472b6", to: "#6366f1" },
@@ -153,25 +177,39 @@ const GetClubs = () => {
                 </div>
             </div>
 
-            {/* Stats Bar */}
-            <div className="bg-white border-b border-gray-200 shadow-sm">
-                <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-2 text-sm text-gray-600">
-                    <span className="font-semibold text-gray-800">{filteredClubs.length}</span>
-                    <span>{filteredClubs.length === 1 ? "club" : "clubs"} found</span>
-                    {search && (
-                        <>
-                            <span className="text-gray-400">·</span>
-                            <span>
-                                Searching for{" "}
-                                <span className="font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
-                                    "{search}"
+            {/* Tabs + Stats Bar */}
+            <div className="bg-white border-b border-gray-200 shadow-sm sticky top-16 z-40">
+                <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+                    <div className="flex">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.key}
+                                onClick={() => { setActiveTab(tab.key); setSearch(""); }}
+                                className={`px-5 py-4 text-sm font-semibold border-b-2 transition ${
+                                    activeTab === tab.key
+                                        ? "border-pink-500 text-pink-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700"
+                                }`}
+                            >
+                                {tab.label}
+                                <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                                    activeTab === tab.key
+                                        ? "bg-pink-100 text-pink-600"
+                                        : "bg-gray-100 text-gray-500"
+                                }`}>
+                                    {tab.key === "all" ? clubs.length : myClubs.length}
                                 </span>
-                            </span>
-                            <button onClick={() => setSearch("")} className="ml-2 text-xs text-gray-400 hover:text-pink-500 transition underline">
+                            </button>
+                        ))}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                        {displayedClubs.length} {displayedClubs.length === 1 ? "result" : "results"}
+                        {search && (
+                            <button onClick={() => setSearch("")} className="ml-2 text-xs text-pink-500 hover:underline">
                                 Clear
                             </button>
-                        </>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -190,25 +228,43 @@ const GetClubs = () => {
                                 </div>
                             ))}
                         </div>
-                    ) : filteredClubs.length === 0 ? (
+                    ) : displayedClubs.length === 0 ? (
                         <div className="text-center py-24">
                             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-100 to-indigo-100 flex items-center justify-center text-3xl mx-auto mb-4">
-                                🔎
+                                {activeTab === "my" ? "🏛️" : "🔎"}
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-700 mb-2">No clubs found</h3>
+                            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                                {activeTab === "my" && !search ? "No clubs joined yet" : "No clubs found"}
+                            </h3>
                             <p className="text-gray-500 text-sm">
-                                {search ? `No clubs match "${search}". Try a different search.` : "No clubs available at the moment."}
+                                {activeTab === "my" && !search
+                                    ? "Join clubs to see them here."
+                                    : search
+                                    ? `No clubs match "${search}".`
+                                    : "No clubs available at the moment."}
                             </p>
+                            {activeTab === "my" && !search && (
+                                <button
+                                    onClick={() => setActiveTab("all")}
+                                    className="mt-4 px-5 py-2 bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition"
+                                >
+                                    Browse All Clubs
+                                </button>
+                            )}
                             {search && (
-                                <button onClick={() => setSearch("")} className="mt-4 px-5 py-2 bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition">
+                                <button
+                                    onClick={() => setSearch("")}
+                                    className="mt-4 px-5 py-2 bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition"
+                                >
                                     Clear Search
                                 </button>
                             )}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {filteredClubs.map((club, index) => {
+                            {displayedClubs.map((club, index) => {
                                 const gradient = gradients[index % gradients.length];
+                                const joined = isMyClub(club._id);
                                 return (
                                     <div
                                         key={club._id}
@@ -228,19 +284,26 @@ const GetClubs = () => {
                                                 >
                                                     {club.name.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-gray-800 text-base leading-tight">
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-semibold text-gray-800 text-base leading-tight truncate">
                                                         {club.name}
                                                     </h4>
-                                                    {club.isActive ? (
-                                                        <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 mt-1 inline-block">
-                                                            Active
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-xs font-medium text-red-500 bg-red-50 border border-red-200 rounded-full px-2 py-0.5 mt-1 inline-block">
-                                                            Inactive
-                                                        </span>
-                                                    )}
+                                                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                                        {club.isActive ? (
+                                                            <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 inline-block">
+                                                                Active
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-xs font-medium text-red-500 bg-red-50 border border-red-200 rounded-full px-2 py-0.5 inline-block">
+                                                                Inactive
+                                                            </span>
+                                                        )}
+                                                        {joined && (
+                                                            <span className="text-xs font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-full px-2 py-0.5 inline-block">
+                                                                Joined ✓
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -248,16 +311,18 @@ const GetClubs = () => {
                                                 {club.description || "No description available for this club."}
                                             </p>
 
-                                            {/* CTA — always navigates to detail page */}
+                                            {/* CTA */}
                                             <Link
                                                 to={`/clubs/${club._id}`}
                                                 className={`block w-full mt-4 py-2 rounded-full text-sm font-semibold text-center transition hover:scale-[1.02] hover:shadow-md ${
-                                                    club.isActive
+                                                    joined
+                                                        ? "bg-indigo-50 text-indigo-700 border border-indigo-300 hover:bg-indigo-100"
+                                                        : club.isActive
                                                         ? "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow"
                                                         : "bg-gray-100 text-gray-500 border border-gray-200"
                                                 }`}
                                             >
-                                                {club.isActive ? "View & Join →" : "View Details"}
+                                                {joined ? "View Details" : club.isActive ? "View & Join →" : "View Details"}
                                             </Link>
                                         </div>
                                     </div>

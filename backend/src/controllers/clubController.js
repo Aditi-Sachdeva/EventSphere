@@ -236,7 +236,25 @@ async function handleGetPendingMembers(req, res) {
         return res.status(500).json({ msg: "Server Error" });
     }
 }
+async function handleGetMyClubs(req, res) {
+    try {
+        const clubs = await Club.find(
+            {
+                "members.user": req.user._id,      // ✅ same pattern as events
+                "members.status": "approved",       // ✅ dot notation
+            },
+            "name description isActive"
+        );
 
+        return res.status(200).json({
+            msg: "My clubs fetched successfully",
+            clubs,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: error.message }); // ✅ also log actual error like events does
+    }
+}
 
 module.exports = {
     handleJoinClub,
@@ -245,6 +263,7 @@ module.exports = {
     handleRemoveMember,
     handleGetClubById,
     handleGetPendingMembers,
+    handleGetMyClubs,
     
 
 

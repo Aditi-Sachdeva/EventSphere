@@ -3,14 +3,19 @@ require('dotenv').config();
 const express = require('express');
 const {connectDb} = require('./src/config/db')
 
-const cors = require("cors"); // CORS MIDDLEWARE -> CROSS ORIGIN RESOURCE SHARING(ALLOW REQUESTS FROM OTHER ORIGINS) FRONTEND->BACKEND
+const cors = require("cors"); 
+const helmet = require("helmet"); 
+const morgan = require("morgan");
 
 const app = express();
 
 connectDb();
 
+app.use(helmet());
+app.use(morgan("dev"));
+
 app.use(cors());
-app.use(express.json()); // ALLOW SERVER TO READ JSON DATA FROM REQUESTS
+app.use(express.json()); 
 
 
 app.use('/api/auth',require('./src/routes/authRoute'));

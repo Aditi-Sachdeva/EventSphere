@@ -45,7 +45,7 @@ export default function SignUp() {
       setMessage(res.data.msg || "Registration successful ");
 
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 1500);
     } catch (err) {
       setIsError(true);

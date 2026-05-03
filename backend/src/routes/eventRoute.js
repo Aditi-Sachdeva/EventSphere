@@ -31,7 +31,7 @@ router.patch("/:eventId", checkAuth, handleEditEvent);
 
 router.patch("/:eventId/cancel", checkAuth, handleCancelEvent);
 
-router.get("/:eventId",handleViewEvent);
+router.get("/:eventId",checkAuth,handleViewEvent);
 
 router.get("/", handleGetAllEvents);
 

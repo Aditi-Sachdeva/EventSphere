@@ -166,7 +166,7 @@ const GetEvents = () => {
 
             {/* Page Header */}
             <div className="pt-16">
-                <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-16 px-6 text-white text-center relative overflow-hidden">
+                <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-20 px-6 text-white text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-white/10"></div>
                     <div className="relative z-10">
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-3 drop-shadow">

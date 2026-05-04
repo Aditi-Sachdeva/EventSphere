@@ -61,7 +61,6 @@ async function handleGetPublicClubs(req, res) {
 }
 
 
-
 async function handleApproveMember(req, res) {
     try {
         const { clubId, userId } = req.body;
@@ -164,20 +163,17 @@ async function handleGetClubById(req, res) {
             return res.status(404).json({ msg: "Club not found" });
         }
  
-        // Count only approved members
         const approvedMemberCount = club.members.filter(
             (m) => m.status === "approved"
         ).length;
- 
-        // Check if requesting user is already a member/pending
-        // req.user may be undefined if route has no checkAuth — handle gracefully
+
         let membershipStatus = null;
         if (req.user) {
             const existing = club.members.find((m) =>
                 m.user.equals(req.user._id)
             );
             if (existing) {
-                membershipStatus = existing.status; // "pending" | "approved"
+                membershipStatus = existing.status; 
             }
         }
  
@@ -240,8 +236,8 @@ async function handleGetMyClubs(req, res) {
     try {
         const clubs = await Club.find(
             {
-                "members.user": req.user._id,      // ✅ same pattern as events
-                "members.status": "approved",       // ✅ dot notation
+                "members.user": req.user._id,    
+                "members.status": "approved", 
             },
             "name description isActive"
         );
@@ -252,7 +248,7 @@ async function handleGetMyClubs(req, res) {
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ msg: error.message }); // ✅ also log actual error like events does
+        return res.status(500).json({ msg: error.message }); 
     }
 }
 

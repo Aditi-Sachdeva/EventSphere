@@ -21,12 +21,10 @@ async function handleCreateClub(req, res) {
       return res.status(404).json({ msg: "User does not exist" });
     }
 
-    // Promote user to organizer if needed
     if (user.role === "user") {
       user.role = "organizer";
     }
 
-    // ✅ Create the club
     const club = await Club.create({
       name,
       description,
@@ -35,7 +33,6 @@ async function handleCreateClub(req, res) {
       isActive: true
     });
 
-    // ✅ Update the user’s club field
     user.club = club._id;
     await user.save();
 
@@ -83,11 +80,10 @@ async function handleAddOrganizer(req, res) {
       return res.status(400).json({ msg: "Already an organizer" });
     }
 
-    // ✅ Promote and tie user to club
     if (user.role === "user") {
       user.role = "organizer";
     }
-    user.club = club._id;   // <-- FIX
+    user.club = club._id; 
     await user.save();
 
     club.organizers.push(user._id);

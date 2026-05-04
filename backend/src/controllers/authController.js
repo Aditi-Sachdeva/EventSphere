@@ -62,7 +62,6 @@ async function handleLogin(req, res) {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ msg: "Invalid Credentials" });
 
-    // ✅ Embed club in JWT
     const token = jwt.sign(
       { id: user._id, role: user.role, club: user.club },
       process.env.JWT_SECRET,
@@ -77,17 +76,13 @@ async function handleLogin(req, res) {
         name: user.name,
         email: user.email,
         role: user.role,
-        club: user.club, // ✅ include club in response
+        club: user.club, 
       }
     });
   } catch (error) {
     return res.status(500).json({ msg: "Server Error" });
   }
 }
-
-
-
-
 
 async function handleLogout(req, res) {
   try {

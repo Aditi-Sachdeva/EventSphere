@@ -21,30 +21,17 @@ const { checkAuth } = require("../middlewares/authMiddleware");
 const { checkRole } = require("../middlewares/roleMiddleware");
 
 router.get('/allEvents', handleGetAllEvents);
-
-// router.get("/me", checkAuth, handleGetMyEvents);
 router.get("/me", checkAuth, handleGetMyRegistrations);
 
 router.post("/", checkAuth, handleCreateEvent);
-
 router.patch("/:eventId", checkAuth, handleEditEvent);
-
 router.patch("/:eventId/cancel", checkAuth, handleCancelEvent);
-
 router.get("/:eventId",checkAuth,handleViewEvent);
-
 router.get("/", handleGetAllEvents);
 
 router.get("/club/:clubId",checkAuth, handleGetClubEvents);
-
-
 router.post("/:eventId/register", checkAuth, handleRegisterEvent);
-
-
 router.patch("/:eventId/unregister", checkAuth, handleUnregisterEvent);
-
-// Get attendees of a specific event
-// router.get("/:eventId/attendees", checkAuth, handleGetEventAttendees);
 
 module.exports = router;
 

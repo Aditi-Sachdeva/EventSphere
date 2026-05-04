@@ -18,7 +18,6 @@ async function handleCreateEvent(req, res) {
     try {
         const { title, description, eventDate, location, totalSeats, image } = req.body;
 
-        // Validate required fields (no clubId here)
         if (!title || !description || !eventDate || !location || !totalSeats) {
             return res.status(400).json({ msg: "All required fields must be provided" });
         }
@@ -36,7 +35,6 @@ async function handleCreateEvent(req, res) {
             return res.status(400).json({ msg: "Event date and time must be in the future" });
         }
 
-        // Organizer’s club comes from req.user
         console.log("req.user:", req.user);
 
         const club = await Club.findById(req.user.club);
@@ -44,7 +42,6 @@ async function handleCreateEvent(req, res) {
             return res.status(404).json({ msg: "Club not found or inactive" });
         }
 
-        // Authorization check
         if (!club.mainOrganizer.equals(req.user._id) &&
             !club.organizers.some(id => id.equals(req.user._id))) {
             return res.status(403).json({ msg: "Access denied" });

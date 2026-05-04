@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true, // REMOVE EXTRA SPACES
+        trim: true, 
     },
     email: {
         type: String,
@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
         enum: ["user", "organizer", "admin"],
         default: "user",
     },
-    // NEW FIELD: reference to the club this user belongs to
     club: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Club",

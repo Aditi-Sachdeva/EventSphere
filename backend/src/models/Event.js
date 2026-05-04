@@ -11,7 +11,7 @@ const registrationSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-}, { _id: false });// TO PREVENT CREATING ID FIEND IN SUBDOCUMENTS
+}, { _id: false });
 
 const eventSchema = new mongoose.Schema({
 
@@ -65,12 +65,6 @@ const eventSchema = new mongoose.Schema({
     },
 
     registrations: [registrationSchema],
-
-    // status: {
-    //     type: String,
-    //     enum: ["upcoming", "completed", "cancelled"],
-    //     default: "upcoming",
-    // }
 
     status: {
     type: String,

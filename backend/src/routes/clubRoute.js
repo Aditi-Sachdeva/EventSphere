@@ -14,7 +14,7 @@ const {
 const { checkAuth } = require("../middlewares/authMiddleware");
 
 router.get('/allClubs', handleGetPublicClubs);
-router.get("/me", checkAuth, handleGetMyClubs);        // ✅ BEFORE /:clubId
+router.get("/me", checkAuth, handleGetMyClubs);       
 router.post('/join', checkAuth, handleJoinClub);
 router.post('/approve', checkAuth, handleApproveMember);
 router.post('/remove', checkAuth, handleRemoveMember);

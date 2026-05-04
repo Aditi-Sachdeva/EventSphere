@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Event = require("../models/Event");
 
 function isValidId(id) {
-    return mongoose.Types.ObjectId.isValid(id);
+    return mongoose.Types.ObjectId.isValid(id); // boolean
 }
 
 function isAuthorized(user, club) {
@@ -102,7 +102,7 @@ async function handleGetMyRegistrations(req, res) {
         })
             .select("title description image eventDate location totalSeats availableSeats status")
             .populate("club", "name")
-            .sort({ eventDate: 1 });
+            .sort({ eventDate: 1 }); // ascending
 
         return res.status(200).json({
             msg: "My registrations fetched successfully",

@@ -26,11 +26,14 @@ function avatarGrad(name = "") {
 
 export default function MemberApprovals() {
   const navigate = useNavigate();
-  const [pendingMembers, setPendingMembers]   = useState([]);
+  const [pendingMembers, setPendingMembers] = useState([]);
   const [approvedMembers, setApprovedMembers] = useState([]);
-  const [loading, setLoading]                 = useState(true);
-  const [actionLoading, setActionLoading]     = useState(null);
-  const [toast, setToast]                     = useState({ msg: "", type: "" });
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [toast, setToast] = useState({ msg: "", type: "" });
+
+  // Dialog state
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, userId: null, name: "" });
 
   function showToast(msg, type = "success") {
     setToast({ msg, type });
@@ -95,6 +98,24 @@ export default function MemberApprovals() {
     }
   }
 
+  async function confirmRemove() {
+    const { userId, name } = confirmDialog;
+    if (!userId) return;
+    const parsed = JSON.parse(localStorage.getItem("user"));
+    const clubId = parsed?.clubId || parsed?.club?._id || parsed?.club;
+    setActionLoading(userId + "_rm");
+    try {
+      await axios.post(`${API}/club/remove`, { clubId, userId }, auth());
+      setApprovedMembers(prev => prev.filter(m => (m.user?._id || m.user) !== userId));
+      showToast(`${name || "Member"} removed successfully`);
+    } catch (e) {
+      showToast(e?.response?.data?.msg || "Failed to remove member", "error");
+    } finally {
+      setActionLoading(null);
+      setConfirmDialog({ open: false, userId: null, name: "" });
+    }
+  }
+
   return (
     <OrganizerLayout>
       {({ clubName }) => (
@@ -109,7 +130,7 @@ export default function MemberApprovals() {
             {[
               { label: "Pending Requests", value: pendingMembers.length, large: true },
               { label: "Approved Members", value: approvedMembers.length, large: true },
-              { label: "Club",             value: clubName || "—",       large: false },
+              { label: "Club", value: clubName || "—", large: false },
             ].map(({ label, value, large }) => (
               <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">{label}</p>
@@ -120,7 +141,7 @@ export default function MemberApprovals() {
             ))}
           </div>
 
-          {/* Pending */}
+          {/* Pending Requests */}
           <div className="mb-8">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
               Pending Requests
@@ -128,7 +149,6 @@ export default function MemberApprovals() {
                 <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{pendingMembers.length}</span>
               )}
             </h3>
-
             {loading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map(i => (
@@ -150,8 +170,8 @@ export default function MemberApprovals() {
             ) : (
               <div className="space-y-3">
                 {pendingMembers.map(member => {
-                  const uid   = member.user?._id;
-                  const name  = member.user?.name || "Unknown";
+                  const uid = member.user?._id;
+                  const name = member.user?.name || "Unknown";
                   const email = member.user?.email || "";
                   return (
                     <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -181,7 +201,7 @@ export default function MemberApprovals() {
             )}
           </div>
 
-          {/* Approved */}
+          {/* Approved Members */}
           <div>
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
               Approved Members
@@ -192,11 +212,11 @@ export default function MemberApprovals() {
             ) : (
               <div className="space-y-3">
                 {approvedMembers.map(member => {
-                  const uid   = member.user?._id;
-                  const name  = member.user?.name || "Unknown";
+                  const uid = member.user?._id;
+                  const name = member.user?.name || "Unknown";
                   const email = member.user?.email || "";
                   return (
-                    <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4 opacity-75">
+                    <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                       <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${avatarGrad(name)} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
                         {getInitials(name)}
                       </div>
@@ -204,7 +224,14 @@ export default function MemberApprovals() {
                         <p className="font-semibold text-gray-800 text-sm">{name}</p>
                         <p className="text-xs text-gray-500 truncate">{email}</p>
                       </div>
-                      <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold flex-shrink-0">✓ Member</span>
+                      <div className="flex gap-2 flex-shrink-0">
+                        <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold flex-shrink-0">✓ Member</span>
+                        <button onClick={() => setConfirmDialog({ open: true, userId: uid, name })}
+                          disabled={actionLoading === uid + "_rm"}
+                          className="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition disabled:opacity-50">
+                          {actionLoading === uid + "_rm" ? "..." : "Remove"}
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -212,6 +239,35 @@ export default function MemberApprovals() {
             )}
           </div>
 
+          {/* Confirmation Dialog */}
+          {confirmDialog.open && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+              <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Remove Member?</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  You’re about to remove <span className="font-semibold">{confirmDialog.name}</span> from the club.
+                  <br />This action cannot be undone.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setConfirmDialog({ open: false, userId: null, name: "" })}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmRemove}
+                    disabled={actionLoading === confirmDialog.userId + "_rm"}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-red-500 hover:bg-red-600 transition disabled:opacity-50"
+                  >
+                    {actionLoading === confirmDialog.userId + "_rm" ? "..." : "Delete"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Toast */}
           {toast.msg && (
             <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold flex items-center gap-2
               ${toast.type === "error" ? "bg-red-50 border border-red-200 text-red-700" : "bg-white border border-gray-200 text-gray-800"}`}>
@@ -224,3 +280,4 @@ export default function MemberApprovals() {
     </OrganizerLayout>
   );
 }
+

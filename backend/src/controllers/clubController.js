@@ -1,5 +1,11 @@
 
+
+
+
+
 const Club = require('./../models/Club');
+const User = require('./../models/User');
+const { sendMemberApprovalEmail } = require('../utils/sendMemberApprovalEmail');
 
 async function handleJoinClub(req, res) {
     try {
@@ -44,20 +50,20 @@ async function handleJoinClub(req, res) {
 
 
 async function handleGetPublicClubs(req, res) {
-  try {
-    const clubs = await Club.find(
-      { isActive: true }, 
-      "name description isActive"
-    );
+    try {
+        const clubs = await Club.find(
+            { isActive: true },
+            "name description isActive"
+        );
 
-    return res.status(200).json({
-      msg: "Active clubs fetched successfully",
-      clubs,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Server Error" });
-  }
+        return res.status(200).json({
+            msg: "Active clubs fetched successfully",
+            clubs,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Server Error" });
+    }
 }
 
 
@@ -98,6 +104,16 @@ async function handleApproveMember(req, res) {
 
         member.status = "approved";
         await club.save();
+
+        // Send approval email — fire and forget
+        User.findById(userId)
+            .select("name email")
+            .then(approvedUser => {
+                if (approvedUser) {
+                    sendMemberApprovalEmail(approvedUser, club)
+                        .catch(err => console.error("📧 Approval email failed:", err.message));
+                }
+            });
 
         return res.status(200).json({ msg: "Member approved successfully" });
     } catch (error) {
@@ -151,18 +167,20 @@ async function handleRemoveMember(req, res) {
         return res.status(500).json({ msg: "Server Error" });
     }
 }
+
+
 async function handleGetClubById(req, res) {
     try {
         const { clubId } = req.params;
- 
+
         const club = await Club.findById(clubId)
             .populate("mainOrganizer", "name email")
             .populate("organizers", "name email");
- 
+
         if (!club) {
             return res.status(404).json({ msg: "Club not found" });
         }
- 
+
         const approvedMemberCount = club.members.filter(
             (m) => m.status === "approved"
         ).length;
@@ -173,10 +191,10 @@ async function handleGetClubById(req, res) {
                 m.user.equals(req.user._id)
             );
             if (existing) {
-                membershipStatus = existing.status; 
+                membershipStatus = existing.status;
             }
         }
- 
+
         return res.status(200).json({
             msg: "Club fetched successfully",
             club: {
@@ -196,6 +214,7 @@ async function handleGetClubById(req, res) {
         return res.status(500).json({ msg: "Server Error" });
     }
 }
+
 
 async function handleGetPendingMembers(req, res) {
     try {
@@ -232,12 +251,14 @@ async function handleGetPendingMembers(req, res) {
         return res.status(500).json({ msg: "Server Error" });
     }
 }
+
+
 async function handleGetMyClubs(req, res) {
     try {
         const clubs = await Club.find(
             {
-                "members.user": req.user._id,    
-                "members.status": "approved", 
+                "members.user": req.user._id,
+                "members.status": "approved",
             },
             "name description isActive"
         );
@@ -248,7 +269,7 @@ async function handleGetMyClubs(req, res) {
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ msg: error.message }); 
+        return res.status(500).json({ msg: error.message });
     }
 }
 
@@ -260,7 +281,4 @@ module.exports = {
     handleGetClubById,
     handleGetPendingMembers,
     handleGetMyClubs,
-    
-
-
-}
+};

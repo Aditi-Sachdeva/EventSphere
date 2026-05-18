@@ -13,13 +13,81 @@ const ViewUsers = () => {
   const [updatingRole, setUpdatingRole] = useState(null);
   const [deleting, setDeleting] = useState(null);
 
+  // const fetchUsers = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await axios.get("http://localhost:5000/api/admin/users", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const formattedUsers = res.data.users.map((user) => ({
+  //       id: user._id,
+  //       name: user.name,
+  //       email: user.email,
+  //       role: user.role.charAt(0).toUpperCase() + user.role.slice(1),
+  //       status: "Active",
+  //       joined: new Date(user.createdAt).toLocaleDateString(),
+  //     }));
+  //     setUsers(formattedUsers);
+  //   } catch (error) {
+  //     showToast("Failed to fetch users", "error");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, []);
+
+  // const updateRole = async (userId, newRole) => {
+  //   setUpdatingRole(userId);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     await axios.put(
+  //       "http://localhost:5000/api/admin/user/role",
+  //       { userId, newRole: newRole.toLowerCase() },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     setUsers((prev) =>
+  //       prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+  //     );
+  //     showToast(`Role updated to ${newRole}`);
+  //   } catch (error) {
+  //     showToast("Failed to update role", "error");
+  //   } finally {
+  //     setUpdatingRole(null);
+  //   }
+  // };
+
+  // const deleteUser = async (userId) => {
+  //   setDeleting(userId);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     await axios.delete(`http://localhost:5000/api/admin/user/${userId}`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setUsers((prev) => prev.filter((u) => u.id !== userId));
+  //     showToast("User deleted successfully");
+  //   } catch (error) {
+  //     showToast("Failed to delete user", "error");
+  //   } finally {
+  //     setDeleting(null);
+  //     setConfirmDelete(null);
+  //   }
+  // };
+
+
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/admin/users", {
+      const API_BASE = process.env.REACT_APP_API_URL;
+
+      const res = await axios.get(`${API_BASE}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const formattedUsers = res.data.users.map((user) => ({
         id: user._id,
         name: user.name,
@@ -28,6 +96,7 @@ const ViewUsers = () => {
         status: "Active",
         joined: new Date(user.createdAt).toLocaleDateString(),
       }));
+
       setUsers(formattedUsers);
     } catch (error) {
       showToast("Failed to fetch users", "error");
@@ -44,11 +113,14 @@ const ViewUsers = () => {
     setUpdatingRole(userId);
     try {
       const token = localStorage.getItem("token");
+      const API_BASE = process.env.REACT_APP_API_URL;
+
       await axios.put(
-        "http://localhost:5000/api/admin/user/role",
+        `${API_BASE}/admin/user/role`,
         { userId, newRole: newRole.toLowerCase() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
       );
@@ -64,9 +136,12 @@ const ViewUsers = () => {
     setDeleting(userId);
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/admin/user/${userId}`, {
+      const API_BASE = process.env.REACT_APP_API_URL;
+
+      await axios.delete(`${API_BASE}/admin/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setUsers((prev) => prev.filter((u) => u.id !== userId));
       showToast("User deleted successfully");
     } catch (error) {
@@ -76,6 +151,7 @@ const ViewUsers = () => {
       setConfirmDelete(null);
     }
   };
+
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
@@ -146,11 +222,10 @@ const ViewUsers = () => {
               <button
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all whitespace-nowrap shrink-0 ${
-                  roleFilter === r
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all whitespace-nowrap shrink-0 ${roleFilter === r
                     ? "text-white border-transparent shadow-md"
                     : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50"
-                }`}
+                  }`}
                 style={roleFilter === r ? { background: GRAD } : {}}
               >
                 {r}
@@ -338,9 +413,8 @@ const ViewUsers = () => {
       {/* Toast */}
       {toast.msg && (
         <div
-          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white transition-all max-w-[calc(100vw-2rem)] ${
-            toast.type === "error" ? "bg-red-500" : ""
-          }`}
+          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white transition-all max-w-[calc(100vw-2rem)] ${toast.type === "error" ? "bg-red-500" : ""
+            }`}
           style={toast.type !== "error" ? { background: GRAD } : {}}
         >
           {toast.type === "error" ? "❌" : "✅"} {toast.msg}

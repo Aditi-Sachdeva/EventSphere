@@ -5,24 +5,50 @@ import axios from "axios";
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
 
 export default function CreateClub() {
-  const [name, setName]             = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [organizerId, setOrganizerId] = useState("");
 
-  const [organizers, setOrganizers]           = useState([]);
+  const [organizers, setOrganizers] = useState([]);
   const [loadingOrganizers, setLoadingOrganizers] = useState(true);
-  const [totalClubs, setTotalClubs]           = useState(0);
-  const [submitting, setSubmitting]           = useState(false);
-  const [toast, setToast]                     = useState({ msg: "", type: "" });
+  const [totalClubs, setTotalClubs] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [toast, setToast] = useState({ msg: "", type: "" });
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = localStorage.getItem("token");
+  //       const [usersRes, clubsRes] = await Promise.all([
+  //         axios.get("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
+  //         axios.get("http://localhost:5000/api/admin/clubs", { headers: { Authorization: `Bearer ${token}` } }),
+  //       ]);
+  //       setOrganizers(usersRes.data.users || []);
+  //       setTotalClubs(clubsRes.data.clubs?.length || 0);
+  //     } catch {
+  //       showToast("Failed to load data", "error");
+  //     } finally {
+  //       setLoadingOrganizers(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
+        const API_BASE = process.env.REACT_APP_API_URL;
+
         const [usersRes, clubsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://localhost:5000/api/admin/clubs", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${API_BASE}/admin/users`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${API_BASE}/admin/clubs`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
+
         setOrganizers(usersRes.data.users || []);
         setTotalClubs(clubsRes.data.clubs?.length || 0);
       } catch {
@@ -47,11 +73,14 @@ export default function CreateClub() {
     setSubmitting(true);
     try {
       const token = localStorage.getItem("token");
+      const API_BASE = process.env.REACT_APP_API_URL;
+
       await axios.post(
-        "http://localhost:5000/api/admin/club/create",
+        `${API_BASE}/admin/club/create`,
         { name: name.trim(), description: description.trim(), mainOrganizerId: organizerId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       showToast("Club created successfully!");
       setTotalClubs(prev => prev + 1);
       setName(""); setDescription(""); setOrganizerId("");
@@ -61,6 +90,31 @@ export default function CreateClub() {
       setSubmitting(false);
     }
   };
+
+
+
+  // const handleSubmit = async () => {
+  //   if (!name.trim() || !description.trim() || !organizerId) {
+  //     showToast("Please fill in all fields", "error");
+  //     return;
+  //   }
+  //   setSubmitting(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     await axios.post(
+  //       "http://localhost:5000/api/admin/club/create",
+  //       { name: name.trim(), description: description.trim(), mainOrganizerId: organizerId },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     showToast("Club created successfully!");
+  //     setTotalClubs(prev => prev + 1);
+  //     setName(""); setDescription(""); setOrganizerId("");
+  //   } catch (err) {
+  //     showToast(err?.response?.data?.msg || "Failed to create club", "error");
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
 
   const handleReset = () => { setName(""); setDescription(""); setOrganizerId(""); };
 
@@ -238,9 +292,8 @@ export default function CreateClub() {
       {/* Toast */}
       {toast.msg && (
         <div
-          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-4 sm:px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 transition-all max-w-[calc(100vw-2rem)] ${
-            toast.type === "error" ? "bg-red-500" : ""
-          }`}
+          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-4 sm:px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 transition-all max-w-[calc(100vw-2rem)] ${toast.type === "error" ? "bg-red-500" : ""
+            }`}
           style={toast.type !== "error" ? { background: GRAD } : {}}
         >
           {toast.type === "error" ? <AlertCircle size={15} className="shrink-0" /> : <CheckCircle2 size={15} className="shrink-0" />}

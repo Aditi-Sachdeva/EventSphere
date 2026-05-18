@@ -8,10 +8,10 @@ import ViewClubs from "./ViewClubs";
 import ViewEvents from "./ViewEvents";
 
 const NAV_LINKS = [
-  { id: "dashboard",   label: "Dashboard",   icon: "⊞" },
-  { id: "view-users",  label: "View Users",  icon: "👥" },
+  { id: "dashboard", label: "Dashboard", icon: "⊞" },
+  { id: "view-users", label: "View Users", icon: "👥" },
   { id: "create-club", label: "Create Club", icon: "＋" },
-  { id: "view-clubs",  label: "View Clubs",  icon: "🏛" },
+  { id: "view-clubs", label: "View Clubs", icon: "🏛" },
   { id: "view-events", label: "View Events", icon: "📅" },
 ];
 
@@ -19,12 +19,12 @@ const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
 const CLUB_COLORS = ["bg-indigo-500", "bg-pink-500", "bg-violet-500", "bg-cyan-500"];
 
 export default function AdminDashboard() {
-  const [page, setPage]   = useState("dashboard");
-  const [open, setOpen]   = useState(false);
+  const [page, setPage] = useState("dashboard");
+  const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [stats, setStats] = useState({ users: 0, clubs: 0, events: 0 });
   const [events, setEvents] = useState([]);
-  const [clubs, setClubs]   = useState([]);
+  const [clubs, setClubs] = useState([]);
 
   // Responsive sidebar default
   useEffect(() => {
@@ -45,12 +45,26 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const usersRes  = await axios.get("http://localhost:5000/api/admin/users",  { headers: { Authorization: `Bearer ${token}` } });
-      const clubsRes  = await axios.get("http://localhost:5000/api/admin/clubs",  { headers: { Authorization: `Bearer ${token}` } });
-      const eventsRes = await axios.get("http://localhost:5000/api/admin/events", { headers: { Authorization: `Bearer ${token}` } });
+      // const usersRes  = await axios.get("http://localhost:5000/api/admin/users",  { headers: { Authorization: `Bearer ${token}` } });
+      // const clubsRes  = await axios.get("http://localhost:5000/api/admin/clubs",  { headers: { Authorization: `Bearer ${token}` } });
+      // const eventsRes = await axios.get("http://localhost:5000/api/admin/events", { headers: { Authorization: `Bearer ${token}` } });
+      const API_BASE = process.env.REACT_APP_API_URL;
+
+      const usersRes = await axios.get(`${API_BASE}/admin/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const clubsRes = await axios.get(`${API_BASE}/admin/clubs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const eventsRes = await axios.get(`${API_BASE}/admin/events`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setStats({
-        users:  usersRes.data.users.length,
-        clubs:  clubsRes.data.clubs.length,
+        users: usersRes.data.users.length,
+        clubs: clubsRes.data.clubs.length,
         events: eventsRes.data.events.length,
       });
       setEvents(eventsRes.data.events.slice(0, 5));
@@ -149,11 +163,11 @@ export default function AdminDashboard() {
           className={`flex-1 transition-all duration-300
             ${open && !isMobile ? "ml-56" : "ml-0 md:ml-16"}`}
         >
-          {page === "dashboard"  && <Dashboard stats={stats} events={events} clubs={clubs} />}
+          {page === "dashboard" && <Dashboard stats={stats} events={events} clubs={clubs} />}
           {page === "view-users" && <ViewUsers />}
-          {page === "create-club"&& <CreateClub />}
+          {page === "create-club" && <CreateClub />}
           {page === "view-clubs" && <ViewClubs />}
-          {page === "view-events"&& <ViewEvents />}
+          {page === "view-events" && <ViewEvents />}
         </main>
 
       </div>
@@ -164,13 +178,13 @@ export default function AdminDashboard() {
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 function Dashboard({ stats, events, clubs }) {
   const STAT_CARDS = [
-    { label: "Total Users",  value: stats.users,  icon: "👥", bg: "bg-indigo-50", text: "text-indigo-500", bar: "bg-indigo-500" },
-    { label: "Total Clubs",  value: stats.clubs,  icon: "🏛", bg: "bg-pink-50",   text: "text-pink-500",   bar: "bg-pink-500"   },
+    { label: "Total Users", value: stats.users, icon: "👥", bg: "bg-indigo-50", text: "text-indigo-500", bar: "bg-indigo-500" },
+    { label: "Total Clubs", value: stats.clubs, icon: "🏛", bg: "bg-pink-50", text: "text-pink-500", bar: "bg-pink-500" },
     { label: "Total Events", value: stats.events, icon: "📅", bg: "bg-violet-50", text: "text-violet-600", bar: "bg-violet-500" },
   ];
 
   const maxOrganizers = clubs.length ? Math.max(...clubs.map(c => c.organizers?.length || 1)) : 1;
-  const activeClubs   = clubs.filter(c => c.isActive).length;
+  const activeClubs = clubs.filter(c => c.isActive).length;
   const pendingEvents = events.filter(e => e.status === "pending").length;
 
   return (
@@ -230,13 +244,12 @@ function Dashboard({ stats, events, clubs }) {
                   </div>
                 </div>
                 <span
-                  className={`ml-2 shrink-0 text-xs font-bold px-2.5 py-0.5 rounded-full border ${
-                    ev.status === "approved"
+                  className={`ml-2 shrink-0 text-xs font-bold px-2.5 py-0.5 rounded-full border ${ev.status === "approved"
                       ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                       : ev.status === "pending"
                         ? "bg-yellow-50 text-yellow-700 border-yellow-200"
                         : "bg-red-50 text-red-600 border-red-200"
-                  }`}
+                    }`}
                 >
                   {ev.status.charAt(0).toUpperCase() + ev.status.slice(1)}
                 </span>

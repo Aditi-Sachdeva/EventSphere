@@ -12,46 +12,99 @@ const ViewClubs = () => {
   const [confirmDeactivate, setConfirmDeactivate] = useState(null);
   const [togglingId, setTogglingId]           = useState(null);
 
+
   const fetchClubs = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/admin/clubs", {
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("token");
+    const API_BASE = process.env.REACT_APP_API_URL;
+
+    const res = await axios.get(`${API_BASE}/admin/clubs`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setClubs(res.data.clubs || []);
+  } catch {
+    showToast('Failed to fetch clubs', 'error');
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => { fetchClubs(); }, []);
+
+const toggleStatus = async (club) => {
+  if (club.isActive) { setConfirmDeactivate(club); return; }
+  await doToggle(club);
+};
+
+const doToggle = async (club) => {
+  setTogglingId(club._id);
+  setConfirmDeactivate(null);
+  try {
+    const token = localStorage.getItem("token");
+    const API_BASE = process.env.REACT_APP_API_URL;
+
+    if (club.isActive) {
+      await axios.put(`${API_BASE}/admin/club/deactivate/${club._id}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setClubs(res.data.clubs || []);
-    } catch {
-      showToast('Failed to fetch clubs', 'error');
-    } finally {
-      setLoading(false);
+    } else {
+      await axios.put(`${API_BASE}/admin/club/reactivate/${club._id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
     }
-  };
 
-  useEffect(() => { fetchClubs(); }, []);
+    setClubs(prev => prev.map(c => c._id === club._id ? { ...c, isActive: !c.isActive } : c));
+    showToast(`"${club.name}" ${club.isActive ? 'deactivated' : 'reactivated'} successfully`);
+  } catch (err) {
+    showToast(err?.response?.data?.msg || 'Failed to update club status', 'error');
+  } finally {
+    setTogglingId(null);
+  }
+};
 
-  const toggleStatus = async (club) => {
-    if (club.isActive) { setConfirmDeactivate(club); return; }
-    await doToggle(club);
-  };
 
-  const doToggle = async (club) => {
-    setTogglingId(club._id);
-    setConfirmDeactivate(null);
-    try {
-      const token = localStorage.getItem("token");
-      if (club.isActive) {
-        await axios.put(`http://localhost:5000/api/admin/club/deactivate/${club._id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
-      } else {
-        await axios.put(`http://localhost:5000/api/admin/club/reactivate/${club._id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
-      }
-      setClubs(prev => prev.map(c => c._id === club._id ? { ...c, isActive: !c.isActive } : c));
-      showToast(`"${club.name}" ${club.isActive ? 'deactivated' : 'reactivated'} successfully`);
-    } catch (err) {
-      showToast(err?.response?.data?.msg || 'Failed to update club status', 'error');
-    } finally {
-      setTogglingId(null);
-    }
-  };
+  // const fetchClubs = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await axios.get("http://localhost:5000/api/admin/clubs", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setClubs(res.data.clubs || []);
+  //   } catch {
+  //     showToast('Failed to fetch clubs', 'error');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => { fetchClubs(); }, []);
+
+  // const toggleStatus = async (club) => {
+  //   if (club.isActive) { setConfirmDeactivate(club); return; }
+  //   await doToggle(club);
+  // };
+
+  // const doToggle = async (club) => {
+  //   setTogglingId(club._id);
+  //   setConfirmDeactivate(null);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (club.isActive) {
+  //       await axios.put(`http://localhost:5000/api/admin/club/deactivate/${club._id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+  //     } else {
+  //       await axios.put(`http://localhost:5000/api/admin/club/reactivate/${club._id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+  //     }
+  //     setClubs(prev => prev.map(c => c._id === club._id ? { ...c, isActive: !c.isActive } : c));
+  //     showToast(`"${club.name}" ${club.isActive ? 'deactivated' : 'reactivated'} successfully`);
+  //   } catch (err) {
+  //     showToast(err?.response?.data?.msg || 'Failed to update club status', 'error');
+  //   } finally {
+  //     setTogglingId(null);
+  //   }
+  // };
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });

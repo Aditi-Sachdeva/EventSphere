@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Event = require("../models/Event");
 const User = require("../models/User");
 const { sendRegistrationEmail } = require("../utils/sendRegistrationEmail");
+const { sendCancellationEmail } = require("../utils/sendCancellationEmail");
 
 function isValidId(id) {
     return mongoose.Types.ObjectId.isValid(id);
@@ -104,13 +105,20 @@ async function handleUnregisterEvent(req, res) {
                 $inc: { availableSeats: 1 },
             },
             { returnDocument: "after" }
-        );
+        ).populate("club", "name");
 
         if (!updatedEvent) {
             return res.status(400).json({
                 msg: "Unregistration failed. Not registered, or event is past/cancelled.",
             });
         }
+
+        // Fire and forget
+        const user = await User.findById(req.user._id).select("name email");
+        sendCancellationEmail(
+            user,
+            { ...updatedEvent.toObject(), clubName: updatedEvent.club?.name }
+        ).catch(err => console.error("📧 Cancellation email failed:", err.message));
 
         return res.status(200).json({ msg: "Unregistered successfully" });
 
@@ -119,7 +127,6 @@ async function handleUnregisterEvent(req, res) {
         return res.status(500).json({ msg: error.message });
     }
 }
-
 // ─── POST /api/event/attendance/scan ─────────────────────────────────────────
 async function handleScanAttendance(req, res) {
     try {

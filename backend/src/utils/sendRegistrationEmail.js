@@ -2,11 +2,18 @@ const nodemailer = require("nodemailer");
 const QRCode = require("qrcode");
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+});
+
+transporter.verify((err) => {
+    if (err) console.error("❌ Email transporter error:", err.message);
+    else console.log("✅ Email transporter ready");
 });
 
 async function sendRegistrationEmail(user, event, qrToken) {
@@ -23,7 +30,7 @@ async function sendRegistrationEmail(user, event, qrToken) {
         hour: "2-digit", minute: "2-digit",
     });
 
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
         from: `"EventSphere" <${process.env.EMAIL_USER}>`,
         to: user.email,
         subject: `You're registered for ${event.title} 🎉`,
@@ -94,6 +101,8 @@ async function sendRegistrationEmail(user, event, qrToken) {
             },
         ],
     });
+
+    console.log("✅ Registration email sent:", info.response);
 }
 
 module.exports = { sendRegistrationEmail };

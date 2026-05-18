@@ -7,12 +7,13 @@ const ClubDetail = () => {
     const navigate = useNavigate();
 
     const [club, setClub] = useState(null);
-    const [membershipStatus, setMembershipStatus] = useState(null); // null | "pending" | "approved"
+    const [membershipStatus, setMembershipStatus] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [joinStatus, setJoinStatus] = useState(null); // null | "loading" | "success" | "error"
+    const [joinStatus, setJoinStatus] = useState(null);
     const [joinMsg, setJoinMsg] = useState("");
     const [user, setUser] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [clubEvents, setClubEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(false);
 
@@ -27,6 +28,20 @@ const ClubDetail = () => {
         handleGetClubEvents();
     }, [clubId]);
 
+    // Close menus on outside click
+    useEffect(() => {
+        const handleOutsideClick = (e) => {
+            if (dropdownOpen || mobileMenuOpen) {
+                if (!e.target.closest("[data-dropdown]") && !e.target.closest("[data-mobilemenu]")) {
+                    setDropdownOpen(false);
+                    setMobileMenuOpen(false);
+                }
+            }
+        };
+        document.addEventListener("mousedown", handleOutsideClick);
+        return () => document.removeEventListener("mousedown", handleOutsideClick);
+    }, [dropdownOpen, mobileMenuOpen]);
+
     const fetchClub = async () => {
         setLoading(true);
         try {
@@ -34,7 +49,7 @@ const ClubDetail = () => {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
             setClub(res.data.club);
-            setMembershipStatus(res.data.membershipStatus); // null | "pending" | "approved"
+            setMembershipStatus(res.data.membershipStatus);
         } catch (err) {
             console.error("Error fetching club:", err);
         } finally {
@@ -117,10 +132,12 @@ const ClubDetail = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen text-gray-800">
+
             {/* Navbar */}
             <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200 h-16">
-                <div className="max-w-7xl mx-auto px-5 h-full flex justify-between items-center">
-                    <Link to="/mainpage" className="flex items-center gap-2">
+                <div className="max-w-7xl mx-auto px-4 sm:px-5 h-full flex justify-between items-center">
+                    {/* Logo */}
+                    <Link to="/mainpage" className="flex items-center gap-2 flex-shrink-0">
                         <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
                             ES
                         </div>
@@ -129,6 +146,7 @@ const ClubDetail = () => {
                         </h1>
                     </Link>
 
+                    {/* Desktop nav */}
                     <div className="hidden md:flex gap-8 font-medium ml-10">
                         <Link to="/mainpage" className="px-3 py-1 text-sm rounded-md transition bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-gray-700 hover:text-transparent">
                             Home
@@ -141,47 +159,78 @@ const ClubDetail = () => {
                         </Link>
                     </div>
 
-                    <div className="relative">
-                        <button
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-md border border-gray-300 hover:shadow-lg transition"
-                        >
-                            <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 text-white font-bold text-xs">
-                                {user.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span className="font-medium text-sm text-gray-800">{user.name}</span>
-                            <span className="text-gray-600 text-xs">▼</span>
-                        </button>
-                        {dropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                                {user.role === "admin" && (
-                                    <button onClick={() => navigate("/admin")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
-                                        Admin Dashboard
+                    {/* Right: user + hamburger */}
+                    <div className="flex items-center gap-2">
+                        <div className="relative" data-dropdown>
+                            <button
+                                onClick={() => { setDropdownOpen(!dropdownOpen); setMobileMenuOpen(false); }}
+                                className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-md border border-gray-300 hover:shadow-lg transition"
+                            >
+                                <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 text-white font-bold text-xs flex-shrink-0">
+                                    {user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="hidden sm:inline font-medium text-sm text-gray-800 max-w-[100px] truncate">{user.name}</span>
+                                <span className="text-gray-600 text-xs">▼</span>
+                            </button>
+                            {dropdownOpen && (
+                                <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg z-50">
+                                    {user.role === "admin" && (
+                                        <button onClick={() => navigate("/admin")} className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Admin Dashboard
+                                        </button>
+                                    )}
+                                    <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Logout
                                     </button>
-                                )}
-                                <button onClick={handleLogout} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
-                                    Logout
-                                </button>
-                            </div>
-                        )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Mobile hamburger */}
+                        <button
+                            data-mobilemenu
+                            onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setDropdownOpen(false); }}
+                            className="md:hidden flex flex-col justify-center items-center w-9 h-9 rounded-md border border-gray-200 bg-gray-50 hover:bg-gray-100 transition"
+                            aria-label="Toggle menu"
+                        >
+                            <span style={{ width: "18px", height: "2px", display: "block", backgroundColor: "#4B5563", transition: "all 0.2s", transform: mobileMenuOpen ? "rotate(45deg) translate(0, 5px)" : "none", marginBottom: "3px" }} />
+                            <span style={{ width: "18px", height: "2px", display: "block", backgroundColor: "#4B5563", opacity: mobileMenuOpen ? 0 : 1, transition: "all 0.2s", marginBottom: "3px" }} />
+                            <span style={{ width: "18px", height: "2px", display: "block", backgroundColor: "#4B5563", transition: "all 0.2s", transform: mobileMenuOpen ? "rotate(-45deg) translate(0, -5px)" : "none" }} />
+                        </button>
                     </div>
                 </div>
+
+                {/* Mobile menu drawer */}
+                {mobileMenuOpen && (
+                    <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200 shadow-md z-40 px-4 py-3 flex flex-col gap-1" data-mobilemenu>
+                        <Link to="/mainpage" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-gray-50 font-medium">
+                            Home
+                        </Link>
+                        <Link to="/events" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-gray-50 font-medium">
+                            Events
+                        </Link>
+                        <Link to="/clubs" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm rounded-md bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-semibold">
+                            Clubs
+                        </Link>
+                    </div>
+                )}
             </nav>
 
             <div className="pt-16">
                 {/* Back button */}
-                <div className="max-w-4xl mx-auto px-6 pt-8 pb-2">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-2">
                     <button
                         onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-500 transition"
+                        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-500 transition group bg-white border border-gray-200 px-4 py-2 rounded-full shadow-sm hover:shadow-md hover:border-indigo-200"
                     >
-                        ← Back to Clubs
+                        <span className="group-hover:-translate-x-0.5 transition-transform">←</span>
+                        Back to Clubs
                     </button>
                 </div>
 
                 {loading ? (
-                    <div className="max-w-4xl mx-auto px-6 py-8 animate-pulse">
-                        <div className="h-48 bg-gray-200 rounded-2xl mb-6"></div>
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 animate-pulse">
+                        <div className="h-40 sm:h-48 bg-gray-200 rounded-2xl mb-6"></div>
                         <div className="h-8 bg-gray-200 rounded w-1/2 mb-3"></div>
                         <div className="h-4 bg-gray-100 rounded w-full mb-2"></div>
                         <div className="h-4 bg-gray-100 rounded w-4/5 mb-8"></div>
@@ -193,7 +242,7 @@ const ClubDetail = () => {
                         <div className="h-12 bg-gray-200 rounded-full w-44 mx-auto"></div>
                     </div>
                 ) : !club ? (
-                    <div className="text-center py-32">
+                    <div className="text-center py-24 sm:py-32 px-4">
                         <div className="text-5xl mb-4">😕</div>
                         <h3 className="text-xl font-semibold text-gray-700 mb-2">Club not found</h3>
                         <p className="text-gray-500 text-sm mb-6">This club may have been removed or doesn't exist.</p>
@@ -202,34 +251,41 @@ const ClubDetail = () => {
                         </Link>
                     </div>
                 ) : (
-                    <div className="max-w-4xl mx-auto px-6 pb-16">
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-16">
+
                         {/* Hero Banner */}
-                        <div className="relative h-48 md:h-64 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl overflow-hidden mb-8 flex items-center justify-center shadow-lg">
-                            <span className="text-white font-extrabold opacity-10 select-none" style={{ fontSize: "10rem", lineHeight: 1 }}>
+                        <div className="relative h-40 sm:h-48 md:h-64 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl overflow-hidden mb-6 sm:mb-8 flex items-center justify-center shadow-lg">
+                            <span className="text-white font-extrabold opacity-10 select-none hidden sm:block" style={{ fontSize: "10rem", lineHeight: 1 }}>
                                 {club.name.charAt(0).toUpperCase()}
                             </span>
+                            <span className="text-white font-extrabold opacity-10 select-none sm:hidden" style={{ fontSize: "6rem", lineHeight: 1 }}>
+                                {club.name.charAt(0).toUpperCase()}
+                            </span>
+
                             {/* Status badge */}
-                            <span className={`absolute top-4 right-4 text-white text-sm font-semibold px-3 py-1.5 rounded-full shadow ${club.isActive ? "bg-green-500" : "bg-red-500"}`}>
+                            <span className={`absolute top-3 right-3 sm:top-4 sm:right-4 text-white text-xs sm:text-sm font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow ${club.isActive ? "bg-green-500" : "bg-red-500"}`}>
                                 {club.isActive ? "Active" : "Inactive"}
                             </span>
+
                             {/* Membership badge */}
                             {membershipStatus === "approved" && (
-                                <span className="absolute top-4 left-4 bg-white/20 text-white text-sm font-semibold px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/30">
+                                <span className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-white/20 text-white text-xs sm:text-sm font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full backdrop-blur-sm border border-white/30">
                                     Member ✓
                                 </span>
                             )}
                             {membershipStatus === "pending" && (
-                                <span className="absolute top-4 left-4 bg-yellow-500/80 text-white text-sm font-semibold px-3 py-1.5 rounded-full">
+                                <span className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-yellow-500/80 text-white text-xs sm:text-sm font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full">
                                     Request Pending
                                 </span>
                             )}
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+
                             {/* Left — main content */}
-                            <div className="lg:col-span-2 space-y-6">
+                            <div className="lg:col-span-2 space-y-5 sm:space-y-6">
                                 <div>
-                                    <h2 className="text-3xl font-extrabold text-gray-800 mb-2 leading-tight">
+                                    <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-2 leading-tight">
                                         {club.name}
                                     </h2>
                                     <p className="text-sm text-gray-400">
@@ -245,25 +301,38 @@ const ClubDetail = () => {
                                 </div>
 
                                 {/* Info Cards */}
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm text-center">
-                                        <p className="text-2xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                                <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                                    <div className="bg-white border border-gray-100 rounded-xl p-3 sm:p-4 shadow-sm text-center">
+                                        <p className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
                                             {club.approvedMemberCount}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1 font-medium">Members</p>
                                     </div>
-                                    <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm text-center">
-                                        <p className="text-2xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+                                    <div className="bg-white border border-gray-100 rounded-xl p-3 sm:p-4 shadow-sm text-center">
+                                        <p className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
                                             {clubEvents.length}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1 font-medium">Events</p>
                                     </div>
-                                    <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm text-center">
-                                        <p className={`text-sm font-bold mt-1 ${club.isActive ? "text-green-600" : "text-red-500"}`}>
+                                    <div className="bg-white border border-gray-100 rounded-xl p-3 sm:p-4 shadow-sm text-center">
+                                        <p className={`text-xs sm:text-sm font-bold mt-1 ${club.isActive ? "text-green-600" : "text-red-500"}`}>
                                             {club.isActive ? "● Active" : "● Inactive"}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1 font-medium">Status</p>
                                     </div>
+                                </div>
+
+                                {/* Membership card — shown below content on mobile, hidden on lg */}
+                                <div className="lg:hidden">
+                                    <MembershipCard
+                                        club={club}
+                                        membershipStatus={membershipStatus}
+                                        joinStatus={joinStatus}
+                                        joinMsg={joinMsg}
+                                        clubEvents={clubEvents}
+                                        formatDate={formatDate}
+                                        handleJoin={handleJoin}
+                                    />
                                 </div>
 
                                 {/* Club Events */}
@@ -285,14 +354,14 @@ const ClubDetail = () => {
                                                 <Link
                                                     key={event._id}
                                                     to={`/events/${event._id}`}
-                                                    className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm hover:shadow-md hover:border-indigo-200 transition group"
+                                                    className="flex items-center gap-3 sm:gap-4 bg-white border border-gray-100 rounded-xl px-3 sm:px-4 py-3 shadow-sm hover:shadow-md hover:border-indigo-200 transition group"
                                                 >
                                                     {/* Date badge */}
-                                                    <div className="flex-shrink-0 w-12 h-12 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-pink-500 rounded-xl text-white">
+                                                    <div className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-pink-500 rounded-xl text-white">
                                                         <span className="text-xs font-semibold leading-none">
                                                             {new Date(event.eventDate).toLocaleDateString("en-IN", { month: "short" })}
                                                         </span>
-                                                        <span className="text-lg font-extrabold leading-none">
+                                                        <span className="text-base sm:text-lg font-extrabold leading-none">
                                                             {new Date(event.eventDate).getDate()}
                                                         </span>
                                                     </div>
@@ -305,8 +374,8 @@ const ClubDetail = () => {
                                                             {event.location || "Venue TBD"} · {formatDate(event.eventDate)}
                                                         </p>
                                                     </div>
-                                                    {/* Status pill */}
-                                                    <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${new Date(event.eventDate) >= new Date()
+                                                    {/* Status pill — hidden on very small screens */}
+                                                    <span className={`hidden xs:flex flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${new Date(event.eventDate) >= new Date()
                                                             ? "bg-green-50 text-green-600 border-green-200"
                                                             : "bg-gray-50 text-gray-400 border-gray-200"
                                                         }`}>
@@ -319,78 +388,18 @@ const ClubDetail = () => {
                                 </div>
                             </div>
 
-                            {/* Right — join card */}
-                            <div className="lg:col-span-1">
-                                <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 sticky top-24">
-                                    <h3 className="text-base font-semibold text-gray-700 mb-1">Membership</h3>
-                                    <p className="text-xs text-gray-400 mb-5">
-                                        Join requests are reviewed by organizers before approval.
-                                    </p>
-
-                                    {/* Feedback message */}
-                                    {joinStatus === "success" && (
-                                        <div className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                                            {joinMsg}
-                                        </div>
-                                    )}
-                                    {joinStatus === "error" && (
-                                        <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                                            {joinMsg}
-                                        </div>
-                                    )}
-
-                                    {/* Action button */}
-                                    {joinStatus === "loading" ? (
-                                        <button disabled className="w-full py-3 rounded-full text-sm font-semibold bg-gray-200 text-gray-500 cursor-not-allowed">
-                                            Sending request...
-                                        </button>
-                                    ) : membershipStatus === "approved" ? (
-                                        <div className="text-center text-sm text-green-600 font-medium bg-green-50 border border-green-200 rounded-xl py-3">
-                                            🎉 You're a member!
-                                        </div>
-                                    ) : membershipStatus === "pending" ? (
-                                        <div className="text-center text-sm text-yellow-700 font-medium bg-yellow-50 border border-yellow-200 rounded-xl py-3">
-                                            ⏳ Request pending approval
-                                        </div>
-                                    ) : !club.isActive ? (
-                                        <button disabled className="w-full py-3 rounded-full text-sm font-semibold bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed">
-                                            Club Unavailable
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={handleJoin}
-                                            className="w-full py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-indigo-500 to-pink-500 text-white shadow hover:shadow-md hover:scale-[1.02] transition"
-                                        >
-                                            Request to Join
-                                        </button>
-                                    )}
-
-                                    <p className="text-xs text-gray-400 text-center mt-3">
-                                        Free to join · Subject to approval
-                                    </p>
-
-                                    {/* Quick stats */}
-                                    <div className="mt-5 pt-4 border-t border-gray-100 space-y-2 text-xs text-gray-500">
-                                        <div className="flex justify-between">
-                                            <span>Members</span>
-                                            <span className="font-semibold text-gray-700">{club.approvedMemberCount}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span>Founded</span>
-                                            <span className="font-semibold text-gray-700">{formatDate(club.createdAt)}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span>Status</span>
-                                            <span className={`font-semibold ${club.isActive ? "text-green-600" : "text-red-500"}`}>
-                                                {club.isActive ? "Active" : "Inactive"}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span>Events</span>
-                                            <span className="font-semibold text-gray-700">{clubEvents.length}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            {/* Right — join card, desktop only */}
+                            <div className="hidden lg:block lg:col-span-1">
+                                <MembershipCard
+                                    club={club}
+                                    membershipStatus={membershipStatus}
+                                    joinStatus={joinStatus}
+                                    joinMsg={joinMsg}
+                                    clubEvents={clubEvents}
+                                    formatDate={formatDate}
+                                    handleJoin={handleJoin}
+                                    sticky
+                                />
                             </div>
                         </div>
                     </div>
@@ -399,11 +408,11 @@ const ClubDetail = () => {
 
             {/* Footer */}
             <footer className="bg-gray-100 border-t border-gray-300 shadow-inner">
-                <div className="max-w-6xl mx-auto px-6 py-14">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10">
                         <div>
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-xl font-bold text-lg">
+                                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-xl font-bold text-lg flex-shrink-0">
                                     ES
                                 </div>
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
@@ -415,17 +424,17 @@ const ClubDetail = () => {
                             </p>
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent mb-4 ml-15">
+                            <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent mb-4">
                                 Explore
                             </h3>
-                            <ul className="space-y-3 text-sm text-gray-800 ml-15">
+                            <ul className="space-y-3 text-sm text-gray-800">
                                 <li><Link to="/mainpage" className="hover:text-pink-600">Home</Link></li>
                                 <li><Link to="/events" className="hover:text-pink-600">Events</Link></li>
                                 <li><Link to="/clubs" className="hover:text-pink-600">Clubs</Link></li>
                                 <li><Link to="/signup" className="hover:text-pink-600">Register</Link></li>
                             </ul>
                         </div>
-                        <div>
+                        <div className="sm:col-span-2 md:col-span-1">
                             <h3 className="text-lg font-semibold bg-gradient-to-r from-indigo-500 to-pink-600 bg-clip-text text-transparent mb-4">
                                 Platform
                             </h3>
@@ -438,7 +447,7 @@ const ClubDetail = () => {
                     </div>
                 </div>
                 <div className="bg-gray-200 border-t border-gray-300">
-                    <div className="max-w-6xl mx-auto px-6 py-6 text-center text-sm text-gray-800 tracking-wide">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 text-center text-sm text-gray-800 tracking-wide">
                         <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent font-semibold">
                             © 2026 EventSphere
                         </span>{" "}
@@ -450,8 +459,78 @@ const ClubDetail = () => {
     );
 };
 
+/* Extracted membership card to avoid duplication between mobile/desktop renders */
+const MembershipCard = ({ club, membershipStatus, joinStatus, joinMsg, clubEvents, formatDate, handleJoin, sticky }) => (
+    <div className={`bg-white border border-gray-200 rounded-2xl shadow-md p-5 sm:p-6 ${sticky ? "sticky top-24" : ""}`}>
+        <h3 className="text-base font-semibold text-gray-700 mb-1">Membership</h3>
+        <p className="text-xs text-gray-400 mb-5">
+            Join requests are reviewed by organizers before approval.
+        </p>
+
+        {/* Feedback message */}
+        {joinStatus === "success" && (
+            <div className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                {joinMsg}
+            </div>
+        )}
+        {joinStatus === "error" && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {joinMsg}
+            </div>
+        )}
+
+        {/* Action button */}
+        {joinStatus === "loading" ? (
+            <button disabled className="w-full py-3 rounded-full text-sm font-semibold bg-gray-200 text-gray-500 cursor-not-allowed">
+                Sending request...
+            </button>
+        ) : membershipStatus === "approved" ? (
+            <div className="text-center text-sm text-green-600 font-medium bg-green-50 border border-green-200 rounded-xl py-3">
+                🎉 You're a member!
+            </div>
+        ) : membershipStatus === "pending" ? (
+            <div className="text-center text-sm text-yellow-700 font-medium bg-yellow-50 border border-yellow-200 rounded-xl py-3">
+                ⏳ Request pending approval
+            </div>
+        ) : !club.isActive ? (
+            <button disabled className="w-full py-3 rounded-full text-sm font-semibold bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed">
+                Club Unavailable
+            </button>
+        ) : (
+            <button
+                onClick={handleJoin}
+                className="w-full py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-indigo-500 to-pink-500 text-white shadow hover:shadow-md hover:scale-[1.02] transition"
+            >
+                Request to Join
+            </button>
+        )}
+
+        <p className="text-xs text-gray-400 text-center mt-3">
+            Free to join · Subject to approval
+        </p>
+
+        {/* Quick stats */}
+        <div className="mt-5 pt-4 border-t border-gray-100 space-y-2 text-xs text-gray-500">
+            <div className="flex justify-between">
+                <span>Members</span>
+                <span className="font-semibold text-gray-700">{club.approvedMemberCount}</span>
+            </div>
+            <div className="flex justify-between">
+                <span>Founded</span>
+                <span className="font-semibold text-gray-700">{formatDate(club.createdAt)}</span>
+            </div>
+            <div className="flex justify-between">
+                <span>Status</span>
+                <span className={`font-semibold ${club.isActive ? "text-green-600" : "text-red-500"}`}>
+                    {club.isActive ? "Active" : "Inactive"}
+                </span>
+            </div>
+            <div className="flex justify-between">
+                <span>Events</span>
+                <span className="font-semibold text-gray-700">{clubEvents.length}</span>
+            </div>
+        </div>
+    </div>
+);
+
 export default ClubDetail;
-
-
-
-

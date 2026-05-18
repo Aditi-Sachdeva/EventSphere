@@ -31,8 +31,6 @@ export default function MemberApprovals() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [toast, setToast] = useState({ msg: "", type: "" });
-
-  // Dialog state
   const [confirmDialog, setConfirmDialog] = useState({ open: false, userId: null, name: "" });
 
   function showToast(msg, type = "success") {
@@ -120,21 +118,25 @@ export default function MemberApprovals() {
     <OrganizerLayout>
       {({ clubName }) => (
         <>
-          <div className="mb-8">
-            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">Member Approvals</h2>
+          {/* Page header */}
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+              Member Approvals
+            </h2>
             <p className="text-gray-500 text-sm mt-1">Review join requests for {clubName || "your club"}</p>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-5 mb-8">
+          <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-6 sm:mb-8">
             {[
-              { label: "Pending Requests", value: pendingMembers.length, large: true },
-              { label: "Approved Members", value: approvedMembers.length, large: true },
-              { label: "Club", value: clubName || "—", large: false },
+              { label: "Pending",  value: pendingMembers.length,  large: true },
+              { label: "Approved", value: approvedMembers.length, large: true },
+              { label: "Club",     value: clubName || "—",        large: false },
             ].map(({ label, value, large }) => (
-              <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">{label}</p>
-                <p className={`font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent ${large ? "text-3xl" : "text-lg truncate"}`}>
+              <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-5">
+                <p className="text-[10px] sm:text-xs text-gray-400 font-medium uppercase tracking-wider mb-1 truncate">{label}</p>
+                <p className={`font-extrabold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent truncate
+                  ${large ? "text-xl sm:text-3xl" : "text-sm sm:text-lg"}`}>
                   {value}
                 </p>
               </div>
@@ -142,18 +144,21 @@ export default function MemberApprovals() {
           </div>
 
           {/* Pending Requests */}
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               Pending Requests
               {pendingMembers.length > 0 && (
-                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{pendingMembers.length}</span>
+                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">
+                  {pendingMembers.length}
+                </span>
               )}
             </h3>
+
             {loading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-gray-100 flex-shrink-0" />
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 animate-pulse flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex-shrink-0" />
                     <div className="flex-1">
                       <div className="h-4 bg-gray-100 rounded w-1/3 mb-2" />
                       <div className="h-3 bg-gray-100 rounded w-1/2" />
@@ -162,8 +167,8 @@ export default function MemberApprovals() {
                 ))}
               </div>
             ) : pendingMembers.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center">
-                <div className="w-14 h-14 mx-auto bg-gradient-to-br from-pink-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">✓</div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-8 sm:p-10 text-center">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br from-pink-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">✓</div>
                 <p className="text-gray-500 text-sm font-medium">All caught up!</p>
                 <p className="text-gray-400 text-xs mt-1">No pending join requests at the moment.</p>
               </div>
@@ -174,23 +179,53 @@ export default function MemberApprovals() {
                   const name = member.user?.name || "Unknown";
                   const email = member.user?.email || "";
                   return (
-                    <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
-                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${avatarGrad(name)} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
-                        {getInitials(name)}
+                    <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+                      {/* Top row: avatar + info */}
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br ${avatarGrad(name)} flex items-center justify-center text-white font-bold text-xs sm:text-sm flex-shrink-0`}>
+                          {getInitials(name)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-800 text-sm truncate">{name}</p>
+                          <p className="text-xs text-gray-500 truncate mt-0.5">{email}</p>
+                          <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full mt-1.5 inline-block font-medium">
+                            Pending
+                          </span>
+                        </div>
+                        {/* Buttons inline on sm+, hidden here on mobile (shown below) */}
+                        <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => handleApprove(uid)}
+                            disabled={actionLoading === uid}
+                            className="px-4 py-2 rounded-xl text-xs font-semibold text-white hover:opacity-90 transition disabled:opacity-50"
+                            style={{ background: GRAD }}
+                          >
+                            {actionLoading === uid ? "..." : "Approve"}
+                          </button>
+                          <button
+                            onClick={() => handleReject(uid)}
+                            disabled={actionLoading === uid + "_r"}
+                            className="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition disabled:opacity-50"
+                          >
+                            {actionLoading === uid + "_r" ? "..." : "Reject"}
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-800 text-sm">{name}</p>
-                        <p className="text-xs text-gray-500 truncate mt-0.5">{email}</p>
-                        <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full mt-1.5 inline-block font-medium">Pending</span>
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        <button onClick={() => handleApprove(uid)} disabled={actionLoading === uid}
-                          className="px-4 py-2 rounded-xl text-xs font-semibold text-white hover:opacity-90 transition disabled:opacity-50"
-                          style={{ background: GRAD }}>
+                      {/* Buttons full-width on mobile */}
+                      <div className="sm:hidden flex gap-2 mt-3">
+                        <button
+                          onClick={() => handleApprove(uid)}
+                          disabled={actionLoading === uid}
+                          className="flex-1 py-2 rounded-xl text-xs font-semibold text-white hover:opacity-90 transition disabled:opacity-50"
+                          style={{ background: GRAD }}
+                        >
                           {actionLoading === uid ? "..." : "Approve"}
                         </button>
-                        <button onClick={() => handleReject(uid)} disabled={actionLoading === uid + "_r"}
-                          className="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition disabled:opacity-50">
+                        <button
+                          onClick={() => handleReject(uid)}
+                          disabled={actionLoading === uid + "_r"}
+                          className="flex-1 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition disabled:opacity-50"
+                        >
                           {actionLoading === uid + "_r" ? "..." : "Reject"}
                         </button>
                       </div>
@@ -203,9 +238,11 @@ export default function MemberApprovals() {
 
           {/* Approved Members */}
           <div>
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               Approved Members
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">{approvedMembers.length}</span>
+              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                {approvedMembers.length}
+              </span>
             </h3>
             {approvedMembers.length === 0 ? (
               <p className="text-gray-400 text-sm">No approved members yet.</p>
@@ -216,19 +253,28 @@ export default function MemberApprovals() {
                   const name = member.user?.name || "Unknown";
                   const email = member.user?.email || "";
                   return (
-                    <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
-                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${avatarGrad(name)} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                    <div key={uid} className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br ${avatarGrad(name)} flex items-center justify-center text-white font-bold text-xs sm:text-sm flex-shrink-0`}>
                         {getInitials(name)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-800 text-sm">{name}</p>
+                        <p className="font-semibold text-gray-800 text-sm truncate">{name}</p>
                         <p className="text-xs text-gray-500 truncate">{email}</p>
+                        {/* "Member" badge below name on mobile */}
+                        <span className="sm:hidden inline-block text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold mt-1">
+                          ✓ Member
+                        </span>
                       </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold flex-shrink-0">✓ Member</span>
-                        <button onClick={() => setConfirmDialog({ open: true, userId: uid, name })}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* "Member" badge beside button on sm+ */}
+                        <span className="hidden sm:inline text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold whitespace-nowrap">
+                          ✓ Member
+                        </span>
+                        <button
+                          onClick={() => setConfirmDialog({ open: true, userId: uid, name })}
                           disabled={actionLoading === uid + "_rm"}
-                          className="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition disabled:opacity-50">
+                          className="px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition disabled:opacity-50 whitespace-nowrap"
+                        >
                           {actionLoading === uid + "_rm" ? "..." : "Remove"}
                         </button>
                       </div>
@@ -241,39 +287,40 @@ export default function MemberApprovals() {
 
           {/* Confirmation Dialog */}
           {confirmDialog.open && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-              <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
-                <h3 className="text-lg font-bold text-gray-800 mb-2">Remove Member?</h3>
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
+              <div className="bg-white rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-sm">
+                <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2">Remove Member?</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  You’re about to remove <span className="font-semibold">{confirmDialog.name}</span> from the club.
+                  You're about to remove <span className="font-semibold">{confirmDialog.name}</span> from the club.
                   <br />This action cannot be undone.
                 </p>
-                <div className="flex justify-end gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => setConfirmDialog({ open: false, userId: null, name: "" })}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+                    className="flex-1 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={confirmRemove}
                     disabled={actionLoading === confirmDialog.userId + "_rm"}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-red-500 hover:bg-red-600 transition disabled:opacity-50"
+                    className="flex-1 py-2 rounded-xl text-xs font-semibold text-white bg-red-500 hover:bg-red-600 transition disabled:opacity-50"
                   >
-                    {actionLoading === confirmDialog.userId + "_rm" ? "..." : "Delete"}
+                    {actionLoading === confirmDialog.userId + "_rm" ? "..." : "Remove"}
                   </button>
                 </div>
               </div>
             </div>
-            
           )}
 
           {/* Toast */}
           {toast.msg && (
-            <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold flex items-center gap-2
+            <div className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 px-4 sm:px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold flex items-center gap-2 max-w-[calc(100vw-2rem)]
               ${toast.type === "error" ? "bg-red-50 border border-red-200 text-red-700" : "bg-white border border-gray-200 text-gray-800"}`}>
-              {toast.type === "error" ? <AlertCircle size={15} className="text-red-500" /> : <CheckCircle2 size={15} className="text-green-500" />}
-              {toast.msg}
+              {toast.type === "error"
+                ? <AlertCircle size={15} className="text-red-500 flex-shrink-0" />
+                : <CheckCircle2 size={15} className="text-green-500 flex-shrink-0" />}
+              <span className="truncate">{toast.msg}</span>
             </div>
           )}
         </>
@@ -281,4 +328,3 @@ export default function MemberApprovals() {
     </OrganizerLayout>
   );
 }
-

@@ -58,18 +58,17 @@ export default function SignUp() {
   return (
     <div className="min-h-screen relative flex flex-col bg-gray-50 overflow-hidden">
 
-      
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-pink-100 opacity-50" />
 
       {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 py-3 sm:py-4 flex justify-between items-center">
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
+            <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs flex-shrink-0">
               ES
             </div>
-            <h1 className="text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
               EventSphere
             </h1>
           </div>
@@ -100,7 +99,7 @@ export default function SignUp() {
 
           <Link
             to="/login"
-            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
+            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg hover:scale-[1.05] transition"
           >
             Login
           </Link>
@@ -108,16 +107,17 @@ export default function SignUp() {
       </nav>
 
       {/* Main */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-6 py-24 mt-[80px]">
-        <div className="w-full max-w-7xl grid md:grid-cols-2 gap-20 items-center">
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-24 mt-[56px] sm:mt-[72px]">
+        <div className="w-full max-w-7xl grid md:grid-cols-2 gap-10 lg:gap-20 items-center">
 
+          {/* Left panel — hidden on mobile */}
           <div className="hidden md:flex justify-center">
             <div className="max-w-xl space-y-7">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-50 text-pink-600 text-xs font-medium">
                 🤝 Join the Community
               </div>
 
-              <h1 className="text-5xl font-bold text-gray-800 leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight">
                 Create Your
                 <br />
                 <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
@@ -126,7 +126,7 @@ export default function SignUp() {
                 Account
               </h1>
 
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
                 Sign up to discover campus events, connect with clubs,
                 and manage your registrations effortlessly.
               </p>
@@ -140,11 +140,20 @@ export default function SignUp() {
           </div>
 
           {/* Form */}
+          <div className="flex justify-center w-full">
+            <div className="w-full max-w-md bg-white/90 backdrop-blur-xl border border-gray-300/50 shadow-2xl rounded-2xl sm:rounded-3xl p-6 sm:p-10">
 
-          <div className="flex justify-center">
-            <div className="w-full max-w-md bg-white/90 backdrop-blur-xl border border-gray-300/50 shadow-2xl rounded-3xl p-10">
+              {/* Mobile-only heading */}
+              <div className="md:hidden text-center mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 text-pink-600 text-xs font-medium mb-2">
+                  🤝 Join the Community
+                </div>
+                <p className="text-gray-500 text-sm">
+                  Discover events & connect with clubs
+                </p>
+              </div>
 
-              <h2 className="text-2xl font-semibold text-gray-800 text-center">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 text-center">
                 Create Account
               </h2>
 
@@ -159,7 +168,7 @@ export default function SignUp() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+              <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-5 sm:space-y-6">
 
                 <FloatingInput
                   label="Full Name"
@@ -196,14 +205,14 @@ export default function SignUp() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-pink-500 to-indigo-600 text-white py-3 rounded-xl font-medium shadow-md hover:shadow-lg hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-pink-500 to-indigo-600 text-white py-3 rounded-xl font-medium shadow-md hover:shadow-lg hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {loading ? "Creating account..." : "Sign Up"}
                 </button>
 
               </form>
 
-              <p className="text-sm text-gray-500 text-center mt-7">
+              <p className="text-sm text-gray-500 text-center mt-6 sm:mt-7">
                 Already have an account?{" "}
                 <Link
                   to="/login"
@@ -228,16 +237,18 @@ function FloatingInput({ label, ...props }) {
         {...props}
         placeholder=" "
         required
-        className="peer w-full rounded-xl border border-gray-300 bg-white px-4 pt-5 pb-2 text-gray-800
+        className="peer w-full rounded-xl border border-gray-300 bg-white px-4 pt-5 pb-2 text-sm sm:text-base text-gray-800
         focus:border-pink-500 focus:ring-2 focus:ring-pink-500/40 outline-none transition"
       />
       <label
-        className="absolute left-4 top-2 text-sm text-gray-500 transition-all
+        className="absolute left-4 top-2 text-xs sm:text-sm text-gray-500 transition-all
                peer-placeholder-shown:top-3.5
-        peer-placeholder-shown:text-base
+        peer-placeholder-shown:text-sm
+        peer-placeholder-shown:sm:text-base
         peer-placeholder-shown:text-gray-400
         peer-focus:top-2
-        peer-focus:text-sm
+        peer-focus:text-xs
+        peer-focus:sm:text-sm
         peer-focus:text-pink-600"
       >
         {label}
@@ -249,7 +260,7 @@ function FloatingInput({ label, ...props }) {
 function Feature({ text }) {
   return (
     <div className="flex items-center gap-4 text-gray-700">
-      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-100 to-indigo-100 flex items-center justify-center text-pink-600 font-semibold shadow-sm">
+      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-100 to-indigo-100 flex items-center justify-center text-pink-600 font-semibold shadow-sm flex-shrink-0">
         ✓
       </div>
       <span className="text-base">{text}</span>

@@ -19,7 +19,6 @@ const ScannerPage = () => {
         }
         setUser(stored);
 
-        // Cleanup scanner on unmount
         return () => {
             if (scannerRef.current) {
                 scannerRef.current.stop().catch(() => { });
@@ -39,7 +38,7 @@ const ScannerPage = () => {
                     await scanner.pause();
                     await processToken(decodedToken);
                 },
-                () => { } // suppress ongoing scan errors
+                () => { }
             );
 
             setIsRunning(true);
@@ -118,73 +117,69 @@ const ScannerPage = () => {
         <div className="min-h-screen bg-gray-950 text-white flex flex-col">
 
             {/* Navbar */}
-            <nav className="fixed top-0 inset-x-0 z-50 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-5 shadow-sm pl-10">
-                {/* Left side: Logo + Title */}
-                <div className="flex items-center gap-3 ml-2">
+            <nav className="fixed top-0 inset-x-0 z-50 h-14 sm:h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 shadow-sm">
+                {/* Left: Logo + Title */}
+                <div className="flex items-center gap-2 sm:gap-3">
                     <Link to="/mainpage">
                         <div
-                            className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-md cursor-pointer"
+                            className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-md cursor-pointer shrink-0"
                             style={{ background: "linear-gradient(to right, #ec4899, #6366f1)" }}
                         >
                             ES
                         </div>
                     </Link>
-
                     <Link to="/mainpage">
-                        <h1 className="text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                        <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap">
                             EventSphere
                         </h1>
                     </Link>
                 </div>
 
-                {/* Right side: User info */}
-                <div className="flex items-center gap-2 pl-3 border-l border-gray-200 mr-16">
+                {/* Right: User info */}
+                <div className="flex items-center gap-2 pl-3 border-l border-gray-200">
                     <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
                         style={{ background: "linear-gradient(to right, #ec4899, #6366f1)" }}
                     >
                         O
                     </div>
-                    <div>
-                        <div className="text-sm font-bold text-gray-800">Organizer</div>
+                    <div className="text-sm font-bold text-gray-800 hidden xs:block sm:block">
+                        Organizer
                     </div>
                 </div>
             </nav>
 
-
-
-            {/* Main */}
-            <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
-                <div className="w-full max-w-sm">
+            {/* Main — padded below fixed navbar */}
+            <div className="flex-1 flex flex-col items-center justify-center px-4 pt-20 sm:pt-24 pb-8 sm:pb-10">
+                <div className="w-full max-w-xs sm:max-w-sm">
 
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/20 text-3xl">
+                    <div className="text-center mb-6 sm:mb-8">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-pink-500/20 text-2xl sm:text-3xl">
                             📷
                         </div>
-                        <h1 className="text-2xl font-bold tracking-tight">Attendance Scanner</h1>
-                        <p className="text-gray-400 text-sm mt-1">
+                        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Attendance Scanner</h1>
+                        <p className="text-gray-400 text-xs sm:text-sm mt-1">
                             Scan attendee QR codes at the entrance
                         </p>
                     </div>
 
                     {/* Scanner box */}
-                    <div className="relative mb-5">
+                    <div className="relative mb-4 sm:mb-5">
                         <div
                             id="qr-reader"
                             className="w-full rounded-2xl overflow-hidden border-2 border-gray-800 bg-gray-900"
-                            style={{ minHeight: "280px" }}
+                            style={{ minHeight: "260px" }}
                         />
 
                         {/* Corner brackets overlay when scanning */}
                         {isRunning && (
                             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                                <div className="relative w-52 h-52">
-                                    <div className="absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-pink-400 rounded-tl-lg" />
-                                    <div className="absolute top-0 right-0 w-8 h-8 border-t-[3px] border-r-[3px] border-pink-400 rounded-tr-lg" />
-                                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[3px] border-l-[3px] border-pink-400 rounded-bl-lg" />
-                                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[3px] border-r-[3px] border-pink-400 rounded-br-lg" />
-                                    {/* Scan line animation */}
+                                <div className="relative w-44 h-44 sm:w-52 sm:h-52">
+                                    <div className="absolute top-0 left-0 w-7 h-7 sm:w-8 sm:h-8 border-t-[3px] border-l-[3px] border-pink-400 rounded-tl-lg" />
+                                    <div className="absolute top-0 right-0 w-7 h-7 sm:w-8 sm:h-8 border-t-[3px] border-r-[3px] border-pink-400 rounded-tr-lg" />
+                                    <div className="absolute bottom-0 left-0 w-7 h-7 sm:w-8 sm:h-8 border-b-[3px] border-l-[3px] border-pink-400 rounded-bl-lg" />
+                                    <div className="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 border-b-[3px] border-r-[3px] border-pink-400 rounded-br-lg" />
                                     <div className="absolute left-0 right-0 h-0.5 bg-pink-400/60 top-1/2 animate-pulse" />
                                 </div>
                             </div>
@@ -193,8 +188,8 @@ const ScannerPage = () => {
                         {/* Idle placeholder */}
                         {!isRunning && (
                             <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gray-900">
-                                <div className="text-center">
-                                    <div className="text-5xl mb-3 opacity-40">📷</div>
+                                <div className="text-center px-4">
+                                    <div className="text-4xl sm:text-5xl mb-3 opacity-40">📷</div>
                                     <p className="text-gray-600 text-sm">Camera is off</p>
                                     <p className="text-gray-700 text-xs mt-1">Press Start to begin scanning</p>
                                 </div>
@@ -204,26 +199,27 @@ const ScannerPage = () => {
 
                     {/* Status indicator bar */}
                     {isRunning && !result && (
-                        <div className="mb-4 flex items-center justify-center gap-2 text-sm text-gray-400">
-                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <div className="mb-4 flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-400">
+                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
                             Scanning for QR codes...
                         </div>
                     )}
 
                     {/* Result feedback card */}
                     {result && status !== "idle" && status !== "scanning" && (
-                        <div className={`mb-5 rounded-2xl px-5 py-4 border ${statusColors[status]}`}>
-                            <p className="font-bold text-base mb-2">
-                                {statusIcon[status]} {statusLabel[status]}
+                        <div className={`mb-4 sm:mb-5 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 border ${statusColors[status]}`}>
+                            <p className="font-bold text-sm sm:text-base mb-2 flex items-center gap-1.5 flex-wrap">
+                                <span>{statusIcon[status]}</span>
+                                <span>{statusLabel[status]}</span>
                             </p>
                             {result.user && (
-                                <p className="text-sm font-medium">👤 {result.user}</p>
+                                <p className="text-xs sm:text-sm font-medium truncate">👤 {result.user}</p>
                             )}
                             {result.event && (
-                                <p className="text-sm">🎪 {result.event}</p>
+                                <p className="text-xs sm:text-sm truncate">🎪 {result.event}</p>
                             )}
                             {result.email && (
-                                <p className="text-xs mt-1 opacity-70">📧 {result.email}</p>
+                                <p className="text-xs mt-1 opacity-70 truncate">📧 {result.email}</p>
                             )}
                             {result.scannedAt && (
                                 <p className="text-xs mt-1 opacity-60">
@@ -231,16 +227,16 @@ const ScannerPage = () => {
                                 </p>
                             )}
                             {!result.user && (
-                                <p className="text-sm">{result.msg}</p>
+                                <p className="text-xs sm:text-sm">{result.msg}</p>
                             )}
-                            <p className="text-xs mt-3 opacity-50">Resuming in 3 seconds...</p>
+                            <p className="text-xs mt-2 sm:mt-3 opacity-50">Resuming in 3 seconds...</p>
                         </div>
                     )}
 
                     {/* Start / Stop button */}
                     <button
                         onClick={isRunning ? stopScanner : startScanner}
-                        className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 ${isRunning
+                        className={`w-full py-3.5 sm:py-4 rounded-2xl font-semibold text-sm transition-all duration-200 ${isRunning
                             ? "bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700"
                             : "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow-lg shadow-pink-500/20 hover:shadow-pink-500/30 hover:scale-[1.02] active:scale-[0.98]"
                             }`}
@@ -248,7 +244,7 @@ const ScannerPage = () => {
                         {isRunning ? "⏹ Stop Scanner" : "▶ Start Scanner"}
                     </button>
 
-                    <p className="text-center text-gray-700 text-xs mt-4">
+                    <p className="text-center text-gray-700 text-xs mt-3 sm:mt-4 px-2">
                         Scanner auto-resumes 3 seconds after each scan
                     </p>
                 </div>

@@ -104,13 +104,13 @@ const GetEvents = () => {
     return (
         <div className="bg-gray-50 min-h-screen text-gray-800">
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200 h-16">
-                <div className="max-w-7xl mx-auto px-5 h-full flex justify-between items-center">
+            <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow border-b border-gray-200 h-14 sm:h-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-5 h-full flex justify-between items-center">
                     <Link to="/mainpage" className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs">
+                        <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-lg font-bold shadow-md text-xs flex-shrink-0">
                             ES
                         </div>
-                        <h1 className="text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                        <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
                             EventSphere
                         </h1>
                     </Link>
@@ -130,16 +130,18 @@ const GetEvents = () => {
                     <div className="relative">
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-md border border-gray-300 hover:shadow-lg transition"
+                            className="flex items-center gap-1.5 sm:gap-2 bg-gray-100 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md shadow-md border border-gray-300 hover:shadow-lg transition"
                         >
-                            <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 text-white font-bold text-xs">
+                            <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 text-white font-bold text-xs flex-shrink-0">
                                 {user.name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="font-medium text-sm text-gray-800">{user.name}</span>
+                            <span className="font-medium text-xs sm:text-sm text-gray-800 max-w-[80px] sm:max-w-none truncate">
+                                {user.name}
+                            </span>
                             <span className="text-gray-600 text-xs">▼</span>
                         </button>
                         {dropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg">
+                            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg z-50">
                                 {user.role === "admin" && (
                                     <>
                                         <button onClick={() => navigate("/admin")} className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
@@ -165,17 +167,17 @@ const GetEvents = () => {
             </nav>
 
             {/* Page Header */}
-            <div className="pt-16">
-                <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-20 px-6 text-white text-center relative overflow-hidden">
+            <div className="pt-14 sm:pt-16">
+                <div className="bg-gradient-to-br from-pink-400 via-rose-400 to-indigo-500 py-12 sm:py-20 px-4 sm:px-6 text-white text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-white/10"></div>
                     <div className="relative z-10">
-                        <h2 className="text-4xl md:text-5xl font-extrabold mb-3 drop-shadow">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 drop-shadow">
                             Upcoming Events
                         </h2>
-                        <p className="text-gray-200 text-base md:text-lg max-w-xl mx-auto mb-8">
+                        <p className="text-gray-200 text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-6 sm:mb-8">
                             Discover and register for the latest campus events. Don't miss out!
                         </p>
-                        <div className="max-w-md mx-auto">
+                        <div className="max-w-md mx-auto px-2 sm:px-0">
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></span>
                                 <input
@@ -183,7 +185,7 @@ const GetEvents = () => {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search events, clubs, locations..."
-                                    className="w-full pl-10 pr-4 py-3 rounded-full text-gray-800 text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
+                                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-full text-gray-800 text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
                                 />
                             </div>
                         </div>
@@ -192,21 +194,21 @@ const GetEvents = () => {
             </div>
 
             {/* Tabs + Stats Bar */}
-            <div className="bg-white border-b border-gray-200 shadow-sm sticky top-16 z-40">
-                <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+            <div className="bg-white border-b border-gray-200 shadow-sm sticky top-14 sm:top-16 z-40">
+                <div className="max-w-6xl mx-auto px-3 sm:px-6 flex items-center justify-between">
                     <div className="flex">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
                                 onClick={() => { setActiveTab(tab.key); setSearch(""); }}
-                                className={`px-5 py-4 text-sm font-semibold border-b-2 transition ${
+                                className={`px-3 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm font-semibold border-b-2 transition ${
                                     activeTab === tab.key
                                         ? "border-pink-500 text-pink-600"
                                         : "border-transparent text-gray-500 hover:text-gray-700"
                                 }`}
                             >
                                 {tab.label}
-                                <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                                <span className={`ml-1.5 sm:ml-2 text-xs px-1.5 sm:px-2 py-0.5 rounded-full ${
                                     activeTab === tab.key
                                         ? "bg-pink-100 text-pink-600"
                                         : "bg-gray-100 text-gray-500"
@@ -216,10 +218,10 @@ const GetEvents = () => {
                             </button>
                         ))}
                     </div>
-                    <div className="text-sm text-gray-500">
-                        {displayedEvents.length} {displayedEvents.length === 1 ? "result" : "results"}
+                    <div className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
+                        <span>{displayedEvents.length} {displayedEvents.length === 1 ? "result" : "results"}</span>
                         {search && (
-                            <button onClick={() => setSearch("")} className="ml-2 text-xs text-pink-500 hover:underline">
+                            <button onClick={() => setSearch("")} className="ml-1 sm:ml-2 text-xs text-pink-500 hover:underline whitespace-nowrap">
                                 Clear
                             </button>
                         )}
@@ -228,10 +230,10 @@ const GetEvents = () => {
             </div>
 
             {/* Events Grid */}
-            <section className="py-12 bg-gradient-to-b from-gray-50 via-pink-50/20 to-indigo-50/20">
-                <div className="max-w-6xl mx-auto px-6">
+            <section className="py-8 sm:py-12 bg-gradient-to-b from-gray-50 via-pink-50/20 to-indigo-50/20">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6">
                     {loading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
                             {[...Array(6)].map((_, i) => (
                                 <div key={i} className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse">
                                     <div className="h-36 bg-gray-200"></div>
@@ -245,11 +247,11 @@ const GetEvents = () => {
                             ))}
                         </div>
                     ) : displayedEvents.length === 0 ? (
-                        <div className="text-center py-24">
+                        <div className="text-center py-16 sm:py-24 px-4">
                             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-100 to-indigo-100 flex items-center justify-center text-3xl mx-auto mb-4">
                                 {activeTab === "my" ? "📅" : "🔎"}
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                            <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
                                 {activeTab === "my" && !search ? "No registrations yet" : "No events found"}
                             </h3>
                             <p className="text-gray-500 text-sm">
@@ -277,7 +279,7 @@ const GetEvents = () => {
                             )}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
                             {displayedEvents.map((event, index) => {
                                 const percent = seatPercent(event);
                                 const registered = isMyEvent(event._id);
@@ -327,7 +329,7 @@ const GetEvents = () => {
                                             )}
                                         </div>
 
-                                        <div className="p-5 flex flex-col flex-1">
+                                        <div className="p-4 sm:p-5 flex flex-col flex-1">
                                             <h4 className="font-semibold text-gray-800 text-base mb-1 leading-tight line-clamp-2">
                                                 {event.title}
                                             </h4>
@@ -363,7 +365,7 @@ const GetEvents = () => {
                                                 </div>
                                             </div>
 
-                                            {/* CTA button — always navigates to detail page */}
+                                            {/* CTA button */}
                                             <div className="mt-auto">
                                                 <Link
                                                     to={`/events/${event._id}`}
@@ -389,11 +391,11 @@ const GetEvents = () => {
 
             {/* Footer */}
             <footer className="mt-8 bg-gray-100 border-t border-gray-300 shadow-inner">
-                <div className="max-w-6xl mx-auto px-6 py-14">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10">
                         <div>
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-xl font-bold text-lg">
+                                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-indigo-600 text-white flex items-center justify-center rounded-xl font-bold text-lg flex-shrink-0">
                                     ES
                                 </div>
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
@@ -405,10 +407,10 @@ const GetEvents = () => {
                             </p>
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent mb-4 ml-15">
+                            <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent mb-4">
                                 Explore
                             </h3>
-                            <ul className="space-y-3 text-sm text-gray-800 ml-15">
+                            <ul className="space-y-3 text-sm text-gray-800">
                                 <li><Link to="/mainpage" className="hover:text-pink-600">Home</Link></li>
                                 <li><Link to="/events" className="hover:text-pink-600">Events</Link></li>
                                 <li><Link to="/clubs" className="hover:text-pink-600">Clubs</Link></li>
@@ -428,7 +430,7 @@ const GetEvents = () => {
                     </div>
                 </div>
                 <div className="bg-gray-200 border-t border-gray-300">
-                    <div className="max-w-6xl mx-auto px-6 py-6 text-center text-sm text-gray-800 tracking-wide">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 text-center text-sm text-gray-800 tracking-wide">
                         <span className="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent font-semibold">
                             © 2026 EventSphere
                         </span>{" "}

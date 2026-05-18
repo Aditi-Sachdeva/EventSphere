@@ -15,40 +15,14 @@ export default function CreateClub() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ msg: "", type: "" });
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       const [usersRes, clubsRes] = await Promise.all([
-  //         axios.get("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
-  //         axios.get("http://localhost:5000/api/admin/clubs", { headers: { Authorization: `Bearer ${token}` } }),
-  //       ]);
-  //       setOrganizers(usersRes.data.users || []);
-  //       setTotalClubs(clubsRes.data.clubs?.length || 0);
-  //     } catch {
-  //       showToast("Failed to load data", "error");
-  //     } finally {
-  //       setLoadingOrganizers(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const API_BASE = process.env.REACT_APP_API_URL;
-
         const [usersRes, clubsRes] = await Promise.all([
-          axios.get(`${API_BASE}/admin/users`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${API_BASE}/admin/clubs`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          axios.get("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("http://localhost:5000/api/admin/clubs", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
-
         setOrganizers(usersRes.data.users || []);
         setTotalClubs(clubsRes.data.clubs?.length || 0);
       } catch {
@@ -60,38 +34,36 @@ export default function CreateClub() {
     fetchData();
   }, []);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = localStorage.getItem("token");
+  //       const API_BASE = process.env.REACT_APP_API_URL;
+
+  //       const [usersRes, clubsRes] = await Promise.all([
+  //         axios.get(`${API_BASE}/admin/users`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }),
+  //         axios.get(`${API_BASE}/admin/clubs`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }),
+  //       ]);
+
+  //       setOrganizers(usersRes.data.users || []);
+  //       setTotalClubs(clubsRes.data.clubs?.length || 0);
+  //     } catch {
+  //       showToast("Failed to load data", "error");
+  //     } finally {
+  //       setLoadingOrganizers(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast({ msg: "", type: "" }), 3000);
   };
-
-  const handleSubmit = async () => {
-    if (!name.trim() || !description.trim() || !organizerId) {
-      showToast("Please fill in all fields", "error");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const token = localStorage.getItem("token");
-      const API_BASE = process.env.REACT_APP_API_URL;
-
-      await axios.post(
-        `${API_BASE}/admin/club/create`,
-        { name: name.trim(), description: description.trim(), mainOrganizerId: organizerId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      showToast("Club created successfully!");
-      setTotalClubs(prev => prev + 1);
-      setName(""); setDescription(""); setOrganizerId("");
-    } catch (err) {
-      showToast(err?.response?.data?.msg || "Failed to create club", "error");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-
 
   // const handleSubmit = async () => {
   //   if (!name.trim() || !description.trim() || !organizerId) {
@@ -101,11 +73,14 @@ export default function CreateClub() {
   //   setSubmitting(true);
   //   try {
   //     const token = localStorage.getItem("token");
+  //     const API_BASE = process.env.REACT_APP_API_URL;
+
   //     await axios.post(
-  //       "http://localhost:5000/api/admin/club/create",
+  //       `${API_BASE}/admin/club/create`,
   //       { name: name.trim(), description: description.trim(), mainOrganizerId: organizerId },
   //       { headers: { Authorization: `Bearer ${token}` } }
   //     );
+
   //     showToast("Club created successfully!");
   //     setTotalClubs(prev => prev + 1);
   //     setName(""); setDescription(""); setOrganizerId("");
@@ -115,6 +90,31 @@ export default function CreateClub() {
   //     setSubmitting(false);
   //   }
   // };
+
+
+
+  const handleSubmit = async () => {
+    if (!name.trim() || !description.trim() || !organizerId) {
+      showToast("Please fill in all fields", "error");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5000/api/admin/club/create",
+        { name: name.trim(), description: description.trim(), mainOrganizerId: organizerId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      showToast("Club created successfully!");
+      setTotalClubs(prev => prev + 1);
+      setName(""); setDescription(""); setOrganizerId("");
+    } catch (err) {
+      showToast(err?.response?.data?.msg || "Failed to create club", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleReset = () => { setName(""); setDescription(""); setOrganizerId(""); };
 

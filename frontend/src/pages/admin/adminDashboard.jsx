@@ -45,22 +45,22 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem("token");
-      // const usersRes  = await axios.get("http://localhost:5000/api/admin/users",  { headers: { Authorization: `Bearer ${token}` } });
-      // const clubsRes  = await axios.get("http://localhost:5000/api/admin/clubs",  { headers: { Authorization: `Bearer ${token}` } });
-      // const eventsRes = await axios.get("http://localhost:5000/api/admin/events", { headers: { Authorization: `Bearer ${token}` } });
-      const API_BASE = process.env.REACT_APP_API_URL;
+      const usersRes  = await axios.get("http://localhost:5000/api/admin/users",  { headers: { Authorization: `Bearer ${token}` } });
+      const clubsRes  = await axios.get("http://localhost:5000/api/admin/clubs",  { headers: { Authorization: `Bearer ${token}` } });
+      const eventsRes = await axios.get("http://localhost:5000/api/admin/events", { headers: { Authorization: `Bearer ${token}` } });
+      // const API_BASE = process.env.REACT_APP_API_URL;
 
-      const usersRes = await axios.get(`${API_BASE}/admin/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // const usersRes = await axios.get(`${API_BASE}/admin/users`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
 
-      const clubsRes = await axios.get(`${API_BASE}/admin/clubs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // const clubsRes = await axios.get(`${API_BASE}/admin/clubs`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
 
-      const eventsRes = await axios.get(`${API_BASE}/admin/events`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // const eventsRes = await axios.get(`${API_BASE}/admin/events`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
 
       setStats({
         users: usersRes.data.users.length,

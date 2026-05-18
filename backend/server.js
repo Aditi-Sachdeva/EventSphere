@@ -17,6 +17,9 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json()); 
 
+app.get("/", (req, res) => {
+    res.send("EventSphere Backend is Running 🚀");
+});
 
 app.use('/api/auth',require('./src/routes/authRoute'));
 

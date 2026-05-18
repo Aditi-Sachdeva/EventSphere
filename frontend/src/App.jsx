@@ -14,7 +14,7 @@ import EventDetail from "./pages/EventDetail";
 import ClubDetail from "./pages/ClubDetail";
 
 // Admin Pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDashboard from "./pages/admin/adminDashboard";
 import ViewUsers from "./pages/admin/ViewUsers";
 import CreateClub from "./pages/admin/CreateClub";
 import ViewClubs from "./pages/admin/ViewClubs";

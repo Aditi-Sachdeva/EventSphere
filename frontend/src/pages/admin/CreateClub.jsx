@@ -4,44 +4,33 @@ import axios from "axios";
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
 
-
 export default function CreateClub() {
-  const [name, setName] = useState("");
+  const [name, setName]             = useState("");
   const [description, setDescription] = useState("");
   const [organizerId, setOrganizerId] = useState("");
 
-  const [organizers, setOrganizers] = useState([]);
+  const [organizers, setOrganizers]           = useState([]);
   const [loadingOrganizers, setLoadingOrganizers] = useState(true);
-
-  const [totalClubs, setTotalClubs] = useState(0);
-
-  const [submitting, setSubmitting] = useState(false);
-  const [toast, setToast] = useState({ msg: "", type: "" });
+  const [totalClubs, setTotalClubs]           = useState(0);
+  const [submitting, setSubmitting]           = useState(false);
+  const [toast, setToast]                     = useState({ msg: "", type: "" });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const [usersRes, clubsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/admin/users", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get("http://localhost:5000/api/admin/clubs", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          axios.get("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("http://localhost:5000/api/admin/clubs", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
-
-        const allUsers = usersRes.data.users || [];
-        setOrganizers(allUsers);
+        setOrganizers(usersRes.data.users || []);
         setTotalClubs(clubsRes.data.clubs?.length || 0);
-      } catch (err) {
+      } catch {
         showToast("Failed to load data", "error");
       } finally {
         setLoadingOrganizers(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -55,67 +44,53 @@ export default function CreateClub() {
       showToast("Please fill in all fields", "error");
       return;
     }
-
     setSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-
       await axios.post(
         "http://localhost:5000/api/admin/club/create",
-        {
-          name: name.trim(),
-          description: description.trim(),
-          mainOrganizerId: organizerId,
-        },
+        { name: name.trim(), description: description.trim(), mainOrganizerId: organizerId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       showToast("Club created successfully!");
-      setTotalClubs((prev) => prev + 1);
-      setName("");
-      setDescription("");
-      setOrganizerId("");
+      setTotalClubs(prev => prev + 1);
+      setName(""); setDescription(""); setOrganizerId("");
     } catch (err) {
-      const msg = err?.response?.data?.msg || "Failed to create club";
-      showToast(msg, "error");
+      showToast(err?.response?.data?.msg || "Failed to create club", "error");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleReset = () => {
-    setName("");
-    setDescription("");
-    setOrganizerId("");
-  };
+  const handleReset = () => { setName(""); setDescription(""); setOrganizerId(""); };
 
-  const selectedOrganizer = organizers.find((o) => o._id === organizerId);
-
+  const selectedOrganizer = organizers.find(o => o._id === organizerId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 p-4 sm:p-6">
 
       {/* Header */}
-      <div className="flex justify-between items-start mb-6 flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-5 sm:mb-6">
         <div>
           <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold mb-2">
             <div className="w-2 h-2 bg-indigo-500 rounded-full" />
             Administration
           </div>
-          <h1 className="text-2xl font-extrabold text-gray-800 mt-1">Create a New Club</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800 mt-1">Create a New Club</h1>
           <p className="text-sm text-gray-500">Set up a new community space for your members</p>
         </div>
 
-        <div className="flex items-center gap-2 bg-white border px-4 py-2 rounded-xl text-sm text-gray-600 shadow-sm">
+        <div className="flex items-center gap-2 bg-white border px-4 py-2 rounded-xl text-sm text-gray-600 shadow-sm self-start sm:self-auto whitespace-nowrap">
           <Users size={16} className="text-pink-500" />
           {loadingOrganizers ? "Loading..." : `${organizers.length} organizers available`}
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      {/* Grid — 1 col on mobile, 3 col on lg+ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
 
         {/* LEFT — Form */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-2xl border shadow-sm">
 
             <div className="border-b p-4">
@@ -123,14 +98,14 @@ export default function CreateClub() {
               <p className="text-xs text-gray-500">Basic information about your club</p>
             </div>
 
-            <div className="p-6 space-y-5">
+            <div className="p-4 sm:p-6 space-y-5">
 
               {/* Club Name */}
               <div>
                 <label className="text-sm font-semibold text-gray-600">Club Name</label>
                 <input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={e => setName(e.target.value)}
                   placeholder="e.g. Photography Enthusiasts"
                   className="w-full mt-1 border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
@@ -142,7 +117,7 @@ export default function CreateClub() {
                 <textarea
                   rows={4}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={e => setDescription(e.target.value)}
                   placeholder="Describe what this club is about..."
                   className="w-full mt-1 border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                 />
@@ -163,14 +138,12 @@ export default function CreateClub() {
                 ) : (
                   <select
                     value={organizerId}
-                    onChange={(e) => setOrganizerId(e.target.value)}
+                    onChange={e => setOrganizerId(e.target.value)}
                     className="w-full mt-1 border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   >
                     <option value="">Select an organizer</option>
-                    {organizers.map((o) => (
-                      <option key={o._id} value={o._id}>
-                        {o.name} — {o.email}
-                      </option>
+                    {organizers.map(o => (
+                      <option key={o._id} value={o._id}>{o.name} — {o.email}</option>
                     ))}
                   </select>
                 )}
@@ -178,25 +151,25 @@ export default function CreateClub() {
 
               {/* Selected organizer info */}
               {selectedOrganizer && (
-                <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
                   <div
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0"
                     style={{ background: GRAD }}
                   >
-                    {selectedOrganizer.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                    {selectedOrganizer.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold text-gray-800">{selectedOrganizer.name}</div>
-                    <div className="text-xs text-gray-400">{selectedOrganizer.email}</div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-gray-800 truncate">{selectedOrganizer.name}</div>
+                    <div className="text-xs text-gray-400 truncate">{selectedOrganizer.email}</div>
                   </div>
-                  <span className="ml-auto text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-600 border border-indigo-200">
+                  <span className="sm:ml-auto text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-600 border border-indigo-200 shrink-0">
                     Organizer
                   </span>
                 </div>
               )}
 
               {/* Buttons */}
-              <div className="flex gap-3 items-center pt-1">
+              <div className="flex flex-wrap gap-3 items-center pt-1">
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
@@ -220,11 +193,11 @@ export default function CreateClub() {
           </div>
         </div>
 
-        {/* RIGHT */}
-        <div className="space-y-6">
+        {/* RIGHT — Tips + Stats */}
+        <div className="space-y-5 sm:space-y-6">
 
           {/* Tips */}
-          <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5">
+          <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 sm:p-5">
             <h3 className="flex items-center gap-2 font-semibold text-indigo-600 mb-3">
               <Sparkles size={16} />
               Tips for a great club
@@ -243,10 +216,7 @@ export default function CreateClub() {
                 <p className="text-sm font-semibold text-gray-800">Total Clubs</p>
                 <p className="text-xs text-gray-400">across platform</p>
               </div>
-              <p
-                className="text-2xl font-extrabold bg-clip-text text-transparent"
-                style={{ backgroundImage: GRAD }}
-              >
+              <p className="text-2xl font-extrabold bg-clip-text text-transparent" style={{ backgroundImage: GRAD }}>
                 {totalClubs}
               </p>
             </div>
@@ -256,10 +226,7 @@ export default function CreateClub() {
                 <p className="text-sm font-semibold text-gray-800">Active Organizers</p>
                 <p className="text-xs text-gray-400">available to assign</p>
               </div>
-              <p
-                className="text-2xl font-extrabold bg-clip-text text-transparent"
-                style={{ backgroundImage: GRAD }}
-              >
+              <p className="text-2xl font-extrabold bg-clip-text text-transparent" style={{ backgroundImage: GRAD }}>
                 {loadingOrganizers ? "—" : organizers.length}
               </p>
             </div>
@@ -271,20 +238,15 @@ export default function CreateClub() {
       {/* Toast */}
       {toast.msg && (
         <div
-          className={`fixed bottom-6 right-6 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 transition-all ${
+          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-4 sm:px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 transition-all max-w-[calc(100vw-2rem)] ${
             toast.type === "error" ? "bg-red-500" : ""
           }`}
           style={toast.type !== "error" ? { background: GRAD } : {}}
         >
-          {toast.type === "error" ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
-          {toast.msg}
+          {toast.type === "error" ? <AlertCircle size={15} className="shrink-0" /> : <CheckCircle2 size={15} className="shrink-0" />}
+          <span className="truncate">{toast.msg}</span>
         </div>
       )}
-
     </div>
   );
 }
-
-
-
-

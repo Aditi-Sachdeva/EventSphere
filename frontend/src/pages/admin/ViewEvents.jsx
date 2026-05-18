@@ -12,14 +12,14 @@ const statusStyle = (status) => {
 };
 
 export default function ViewEvents() {
-  const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState('');
+  const [events, setEvents]       = useState([]);
+  const [search, setSearch]       = useState('');
   const [statusFilter, setFilter] = useState('all');
-  const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState({ msg: '', type: '' });
+  const [loading, setLoading]     = useState(false);
+  const [toast, setToast]         = useState({ msg: '', type: '' });
   const [selectedEvent, setSelected] = useState(null);
-  const [actioningId, setActioning] = useState(null);
-  const [confirm, setConfirm] = useState(null);
+  const [actioningId, setActioning]  = useState(null);
+  const [confirm, setConfirm]        = useState(null);
 
   useEffect(() => { fetchEvents(); }, []);
 
@@ -57,8 +57,8 @@ export default function ViewEvents() {
   };
 
   const stats = {
-    total: events.length,
-    pending: events.filter(e => e.status === 'pending' || e.status === 'upcoming').length,
+    total:    events.length,
+    pending:  events.filter(e => e.status === 'pending' || e.status === 'upcoming').length,
     approved: events.filter(e => e.status === 'approved').length,
     rejected: events.filter(e => e.status === 'rejected').length,
   };
@@ -75,55 +75,57 @@ export default function ViewEvents() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 py-6 sm:py-8 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-5 sm:mb-6">
           <div>
             <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold mb-2">
               <div className="w-2 h-2 bg-indigo-500 rounded-full" /> Administration
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Manage Events</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Manage Events</h1>
             <p className="text-sm text-gray-500">Review and moderate club events</p>
           </div>
           {stats.pending > 0 && (
-            <div className="bg-yellow-100 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2">
+            <div className="self-start sm:self-auto bg-yellow-100 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 whitespace-nowrap">
               ⚡ {stats.pending} pending review
             </div>
           )}
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Stats — 2 col on mobile, 4 col on md+ */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
           {[
-            { label: 'Total', value: stats.total, bg: 'bg-indigo-100', color: 'text-indigo-700', icon: '📅' },
-            { label: 'Pending', value: stats.pending, bg: 'bg-yellow-100', color: 'text-yellow-700', icon: '⏳' },
+            { label: 'Total',    value: stats.total,    bg: 'bg-indigo-100',  color: 'text-indigo-700',  icon: '📅' },
+            { label: 'Pending',  value: stats.pending,  bg: 'bg-yellow-100',  color: 'text-yellow-700',  icon: '⏳' },
             { label: 'Approved', value: stats.approved, bg: 'bg-emerald-100', color: 'text-emerald-700', icon: '✅' },
-            { label: 'Rejected', value: stats.rejected, bg: 'bg-red-100', color: 'text-red-700', icon: '❌' },
+            { label: 'Rejected', value: stats.rejected, bg: 'bg-red-100',     color: 'text-red-700',     icon: '❌' },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
-              <div className={`w-12 h-12 ${s.bg} ${s.color} rounded-xl flex items-center justify-center text-2xl`}>{s.icon}</div>
+            <div key={s.label} className="bg-white rounded-2xl p-3 sm:p-5 border border-gray-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md transition-all">
+              <div className={`w-9 h-9 sm:w-12 sm:h-12 ${s.bg} ${s.color} rounded-xl flex items-center justify-center text-lg sm:text-2xl shrink-0`}>
+                {s.icon}
+              </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-                <div className="text-xs text-gray-500 mt-1">{s.label}</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{s.value}</div>
+                <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Search & Filter */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-3 items-center">
+        <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-4 mb-5 sm:mb-6 shadow-sm flex flex-col gap-3">
           <input
             value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search events, clubs, organizers..."
-            className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-gray-400">Status:</span>
             {['all', 'pending', 'approved', 'rejected'].map(s => (
               <button key={s} onClick={() => setFilter(s)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${statusFilter === s ? 'text-white border-transparent shadow-md' : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50'}`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${statusFilter === s ? 'text-white border-transparent shadow-md' : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50'}`}
                 style={statusFilter === s ? { background: GRAD } : {}}>
                 {s.charAt(0).toUpperCase() + s.slice(1)}
               </button>
@@ -133,6 +135,8 @@ export default function ViewEvents() {
 
         {/* Table */}
         <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+
+          {/* Desktop header */}
           <div className="hidden md:grid grid-cols-12 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
             <div className="col-span-4">Event</div>
             <div className="col-span-3">Club / Organizer</div>
@@ -150,82 +154,120 @@ export default function ViewEvents() {
               {filtered.map(event => {
                 const normalizedStatus = event.status === 'upcoming' ? 'pending' : event.status;
                 return (
-                  <div key={event._id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
-                    <div className="grid grid-cols-12 items-center gap-2">
+                  <div key={event._id} className="px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors">
+
+                    {/* ── Desktop row ── */}
+                    <div className="hidden md:grid grid-cols-12 items-center gap-2">
 
                       {/* Event */}
-                      <div className="col-span-12 md:col-span-4 flex items-center gap-3">
+                      <div className="col-span-4 flex items-center gap-3">
                         <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0" style={{ background: GRAD }}>
                           {event.title?.[0] || 'E'}
                         </div>
-                        <div>
-                          <div
-                            className="font-semibold text-gray-900 text-sm cursor-pointer hover:text-indigo-600"
-                            onClick={() => setSelected(event)}
-                          >
+                        <div className="min-w-0">
+                          <div className="font-semibold text-gray-900 text-sm cursor-pointer hover:text-indigo-600 truncate" onClick={() => setSelected(event)}>
                             {event.title}
                           </div>
-                          <div className="text-xs text-gray-400">by {event.createdBy?.name || '—'}</div>
+                          <div className="text-xs text-gray-400 truncate">by {event.createdBy?.name || '—'}</div>
                         </div>
                       </div>
 
                       {/* Club */}
-                      <div className="col-span-6 md:col-span-3 flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-600">
+                      <div className="col-span-3 flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-600 shrink-0">
                           {event.club?.name?.[0]?.toUpperCase() || '?'}
                         </div>
-                        <div>
-                          <div className="text-xs font-semibold text-gray-700">{event.club?.name || '—'}</div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-gray-700 truncate">{event.club?.name || '—'}</div>
                           <div className="text-xs text-gray-400">{event.club?.isActive ? '● Active' : '● Inactive'}</div>
                         </div>
                       </div>
 
                       {/* Date */}
-                      <div className="col-span-3 md:col-span-2 text-xs text-gray-500">
-                        {event.eventDate
-                          ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                          : '—'}
+                      <div className="col-span-2 text-xs text-gray-500">
+                        {event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                       </div>
 
                       {/* Status */}
-                      <div className="col-span-6 md:col-span-2">
+                      <div className="col-span-2">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${statusStyle(normalizedStatus)}`}>
                           {normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1)}
                         </span>
                       </div>
 
                       {/* Actions */}
-                      {/* Actions */}
-                      <div className="col-span-6 md:col-span-1 flex justify-end gap-1">
+                      <div className="col-span-1 flex justify-end gap-1">
                         {normalizedStatus === 'rejected' ? (
-                          <span className=" text-sm font-semibold text-gray-500  rounded-lg">
-                            No Action
-                          </span>
+                          <span className="text-xs font-semibold text-gray-400">No Action</span>
                         ) : (
                           <>
                             {normalizedStatus !== 'approved' && (
-                              <button
-                                onClick={() => setConfirm({ event, action: 'approve' })}
-                                disabled={actioningId === event._id}
-                                title="Approve"
+                              <button onClick={() => setConfirm({ event, action: 'approve' })} disabled={actioningId === event._id} title="Approve"
                                 className="w-8 h-8 rounded-lg flex items-center justify-center border transition-all disabled:opacity-50 text-sm"
-                                style={{ backgroundColor: '#dcfce7', color: '#16a34a', borderColor: '#bbf7d0' }}
-                              >
-                                ✅
-                              </button>
+                                style={{ backgroundColor: '#dcfce7', color: '#16a34a', borderColor: '#bbf7d0' }}>✅</button>
                             )}
                             {normalizedStatus !== 'rejected' && (
-                              <button
-                                onClick={() => setConfirm({ event, action: 'reject' })}
-                                disabled={actioningId === event._id}
-                                title="Reject"
-                                className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 transition-all disabled:opacity-50 text-sm"
-                              >
-                                ❌
-                              </button>
+                              <button onClick={() => setConfirm({ event, action: 'reject' })} disabled={actioningId === event._id} title="Reject"
+                                className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 transition-all disabled:opacity-50 text-sm">❌</button>
                             )}
                           </>
                         )}
+                      </div>
+                    </div>
+
+                    {/* ── Mobile card ── */}
+                    <div className="md:hidden flex flex-col gap-2.5">
+
+                      {/* Row 1: avatar + title + actions */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-2xl flex items-center justify-center text-white font-bold text-sm uppercase shrink-0" style={{ background: GRAD }}>
+                          {event.title?.[0] || 'E'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div
+                            className="font-semibold text-gray-900 text-sm cursor-pointer hover:text-indigo-600 truncate"
+                            onClick={() => setSelected(event)}
+                          >
+                            {event.title}
+                          </div>
+                          <div className="text-xs text-gray-400 truncate">by {event.createdBy?.name || '—'}</div>
+                        </div>
+                        {/* Action buttons */}
+                        <div className="flex gap-1 shrink-0">
+                          {normalizedStatus === 'rejected' ? (
+                            <span className="text-xs text-gray-400 self-center">No Action</span>
+                          ) : (
+                            <>
+                              {normalizedStatus !== 'approved' && (
+                                <button onClick={() => setConfirm({ event, action: 'approve' })} disabled={actioningId === event._id}
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center border text-sm disabled:opacity-50"
+                                  style={{ backgroundColor: '#dcfce7', color: '#16a34a', borderColor: '#bbf7d0' }}>✅</button>
+                              )}
+                              {normalizedStatus !== 'rejected' && (
+                                <button onClick={() => setConfirm({ event, action: 'reject' })} disabled={actioningId === event._id}
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 border border-red-200 text-sm disabled:opacity-50">❌</button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Row 2: club + date + status */}
+                      <div className="flex items-center gap-2 flex-wrap pl-1">
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-md bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-600 shrink-0">
+                            {event.club?.name?.[0]?.toUpperCase() || '?'}
+                          </div>
+                          <span className="text-xs font-semibold text-gray-700 truncate max-w-[90px]">{event.club?.name || '—'}</span>
+                        </div>
+                        {event.eventDate && (
+                          <span className="text-xs text-gray-400">
+                            📅 {new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        )}
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${statusStyle(normalizedStatus)}`}>
+                          {normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1)}
+                        </span>
                       </div>
 
                     </div>
@@ -237,35 +279,29 @@ export default function ViewEvents() {
         </div>
       </div>
 
-      {/* ── Confirm Modal ── */}
+      {/* Confirm Modal */}
       {confirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-gray-100 p-6 text-center overflow-y-auto max-h-[90vh]">
-
             <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center text-2xl ${confirm.action === 'approve' ? 'bg-green-100' : 'bg-red-100'}`}>
               {confirm.action === 'approve' ? '✅' : '❌'}
             </div>
-
             <h2 className="text-lg font-bold text-gray-900 mb-1">
               {confirm.action === 'approve' ? 'Approve Event?' : 'Reject Event?'}
             </h2>
             <p className="text-sm text-gray-500 mb-1">You're about to {confirm.action}</p>
             <p className="text-sm font-bold text-gray-800 mb-4">"{confirm.event.title}"</p>
-
             <div className={`text-xs px-4 py-3 rounded-xl mb-6 text-left border ${confirm.action === 'approve' ? 'bg-green-50 border-green-100 text-green-700' : 'bg-yellow-50 border-yellow-100 text-yellow-700'}`}>
               {confirm.action === 'approve'
                 ? '⚡ This event will be visible to all users.'
-                : '⚠️ Organizers won\'t be able to register attendees for this event.'}
+                : "⚠️ Organizers won't be able to register attendees for this event."}
             </div>
-
             <div className="flex gap-3">
-              <button
-                onClick={() => setConfirm(null)}
+              <button onClick={() => setConfirm(null)}
                 className="flex-1 py-2.5 rounded-xl text-sm font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
                 Cancel
               </button>
-              <button
-                onClick={() => updateStatus(confirm.event._id, confirm.action)}
+              <button onClick={() => updateStatus(confirm.event._id, confirm.action)}
                 className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition"
                 style={{ backgroundColor: confirm.action === 'approve' ? '#22c55e' : '#ef4444' }}>
                 {confirm.action === 'approve' ? 'Approve' : 'Reject'}
@@ -277,22 +313,22 @@ export default function ViewEvents() {
 
       {/* Detail Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-100">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm" style={{ background: GRAD }}>
+            <div className="p-5 sm:p-6">
+              <div className="flex items-start justify-between gap-3 mb-5">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm shrink-0" style={{ background: GRAD }}>
                     {selectedEvent.title?.[0] || 'E'}
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-base">{selectedEvent.title}</h3>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-gray-900 text-base truncate">{selectedEvent.title}</h3>
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${statusStyle(selectedEvent.status)}`}>
                       {selectedEvent.status}
                     </span>
                   </div>
                 </div>
-                <button onClick={() => setSelected(null)} className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">✕</button>
+                <button onClick={() => setSelected(null)} className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition shrink-0">✕</button>
               </div>
 
               <div className="space-y-3">
@@ -303,8 +339,8 @@ export default function ViewEvents() {
                   ].map(f => (
                     <div key={f.label} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                       <div className="text-xs text-gray-400 font-bold uppercase tracking-wide mb-1">{f.label}</div>
-                      <div className="text-sm font-semibold text-gray-800">{f.value || '—'}</div>
-                      {f.sub && <div className="text-xs text-gray-400">{f.sub}</div>}
+                      <div className="text-sm font-semibold text-gray-800 truncate">{f.value || '—'}</div>
+                      {f.sub && <div className="text-xs text-gray-400 truncate">{f.sub}</div>}
                     </div>
                   ))}
                 </div>
@@ -325,7 +361,6 @@ export default function ViewEvents() {
                   </div>
                 )}
 
-                {/* Reverse buttons in detail modal */}
                 <div className="flex gap-3 pt-1">
                   {selectedEvent.status !== 'approved' && (
                     <button
@@ -351,9 +386,10 @@ export default function ViewEvents() {
 
       {/* Toast */}
       {toast.msg && (
-        <div className={`fixed bottom-6 right-6 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 z-50 ${toast.type === 'error' ? 'bg-red-500' : ''}`}
+        <div className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-4 sm:px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white flex items-center gap-2 z-50 max-w-[calc(100vw-2rem)] ${toast.type === 'error' ? 'bg-red-500' : ''}`}
           style={toast.type !== 'error' ? { background: GRAD } : {}}>
-          {toast.type === 'error' ? '❌' : '✅'} {toast.msg}
+          {toast.type === 'error' ? '❌' : '✅'}
+          <span className="truncate">{toast.msg}</span>
         </div>
       )}
     </div>

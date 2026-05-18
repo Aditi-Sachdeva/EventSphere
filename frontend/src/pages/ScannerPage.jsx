@@ -22,7 +22,7 @@ const ScannerPage = () => {
         // Cleanup scanner on unmount
         return () => {
             if (scannerRef.current) {
-                scannerRef.current.stop().catch(() => {});
+                scannerRef.current.stop().catch(() => { });
             }
         };
     }, []);
@@ -39,7 +39,7 @@ const ScannerPage = () => {
                     await scanner.pause();
                     await processToken(decodedToken);
                 },
-                () => {} // suppress ongoing scan errors
+                () => { } // suppress ongoing scan errors
             );
 
             setIsRunning(true);
@@ -52,7 +52,7 @@ const ScannerPage = () => {
 
     const stopScanner = async () => {
         if (scannerRef.current) {
-            await scannerRef.current.stop().catch(() => {});
+            await scannerRef.current.stop().catch(() => { });
             scannerRef.current = null;
         }
         setIsRunning(false);
@@ -118,20 +118,40 @@ const ScannerPage = () => {
         <div className="min-h-screen bg-gray-950 text-white flex flex-col">
 
             {/* Navbar */}
-            <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
-                <Link to="/mainpage" className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-lg flex items-center justify-center font-bold text-xs shadow-lg">
-                        ES
+            <nav className="fixed top-0 inset-x-0 z-50 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-5 shadow-sm pl-10">
+                {/* Left side: Logo + Title */}
+                <div className="flex items-center gap-3 ml-2">
+                    <Link to="/mainpage">
+                        <div
+                            className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-md cursor-pointer"
+                            style={{ background: "linear-gradient(to right, #ec4899, #6366f1)" }}
+                        >
+                            ES
+                        </div>
+                    </Link>
+
+                    <Link to="/mainpage">
+                        <h1 className="text-lg font-bold bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent">
+                            EventSphere
+                        </h1>
+                    </Link>
+                </div>
+
+                {/* Right side: User info */}
+                <div className="flex items-center gap-2 pl-3 border-l border-gray-200 mr-16">
+                    <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                        style={{ background: "linear-gradient(to right, #ec4899, #6366f1)" }}
+                    >
+                        O
                     </div>
-                    <span className="font-bold text-white">EventSphere</span>
-                </Link>
-                <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400 bg-gray-800 px-3 py-1 rounded-full border border-gray-700">
-                        {user.role}
-                    </span>
-                    <span className="text-sm text-gray-300 font-medium">{user.name}</span>
+                    <div>
+                        <div className="text-sm font-bold text-gray-800">Organizer</div>
+                    </div>
                 </div>
             </nav>
+
+
 
             {/* Main */}
             <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
@@ -220,11 +240,10 @@ const ScannerPage = () => {
                     {/* Start / Stop button */}
                     <button
                         onClick={isRunning ? stopScanner : startScanner}
-                        className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 ${
-                            isRunning
-                                ? "bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700"
-                                : "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow-lg shadow-pink-500/20 hover:shadow-pink-500/30 hover:scale-[1.02] active:scale-[0.98]"
-                        }`}
+                        className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 ${isRunning
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700"
+                            : "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow-lg shadow-pink-500/20 hover:shadow-pink-500/30 hover:scale-[1.02] active:scale-[0.98]"
+                            }`}
                     >
                         {isRunning ? "⏹ Stop Scanner" : "▶ Start Scanner"}
                     </button>

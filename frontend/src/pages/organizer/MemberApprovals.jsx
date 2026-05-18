@@ -265,6 +265,7 @@ export default function MemberApprovals() {
                 </div>
               </div>
             </div>
+            
           )}
 
           {/* Toast */}

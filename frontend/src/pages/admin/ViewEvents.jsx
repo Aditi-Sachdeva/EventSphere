@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 
 const GRAD = "linear-gradient(to right, #ec4899, #6366f1)";
-// const API = process.env.REACT_APP_API_URL;  
 const API = "http://localhost:5000/api";
 const auth = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
 

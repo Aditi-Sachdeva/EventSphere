@@ -1,8 +1,3 @@
-
-
-
-
-
 const Club = require('./../models/Club');
 const User = require('./../models/User');
 const { sendMemberApprovalEmail } = require('../utils/sendMemberApprovalEmail');

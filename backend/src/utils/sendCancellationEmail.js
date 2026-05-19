@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 10000,
 });
-
 async function sendCancellationEmail(user, event) {
     const eventDate = new Date(event.eventDate).toLocaleDateString("en-IN", {
         weekday: "long", day: "numeric", month: "long", year: "numeric",

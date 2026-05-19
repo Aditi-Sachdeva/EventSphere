@@ -17,7 +17,6 @@ function isAuthorized(user, club) {
     );
 }
 
-// ─── POST /api/event/:eventId/register ───────────────────────────────────────
 async function handleRegisterEvent(req, res) {
     try {
         const { eventId } = req.params;
@@ -57,21 +56,19 @@ async function handleRegisterEvent(req, res) {
             });
         }
 
-        // Set tokenExpiresAt = event date + 3 hours
         const expiresAt = new Date(event.eventDate.getTime() + 3 * 60 * 60 * 1000);
         await Event.updateOne(
             { _id: eventId, "registrations.qrToken": qrToken },
             { $set: { "registrations.$.tokenExpiresAt": expiresAt } }
         );
 
-        // Send email — fire and forget
         const user = await User.findById(req.user._id).select("name email");
         sendRegistrationEmail(
             user,
             { ...event.toObject(), clubName: event.club?.name },
             qrToken
         ).catch(err => {
-            console.error("📧 Email failed (non-fatal):", err.message);
+            console.error("📧 Email failed :", err.message);
             console.error("📧 Full error:", err);
         });
 
@@ -85,7 +82,6 @@ async function handleRegisterEvent(req, res) {
     }
 }
 
-// ─── PATCH /api/event/:eventId/unregister ────────────────────────────────────
 async function handleUnregisterEvent(req, res) {
     try {
         const { eventId } = req.params;
@@ -113,7 +109,6 @@ async function handleUnregisterEvent(req, res) {
             });
         }
 
-        // Fire and forget
         const user = await User.findById(req.user._id).select("name email");
         sendCancellationEmail(
             user,
@@ -127,7 +122,8 @@ async function handleUnregisterEvent(req, res) {
         return res.status(500).json({ msg: error.message });
     }
 }
-// ─── POST /api/event/attendance/scan ─────────────────────────────────────────
+
+
 async function handleScanAttendance(req, res) {
     try {
         const { token } = req.body;
@@ -184,7 +180,6 @@ async function handleScanAttendance(req, res) {
     }
 }
 
-// ─── GET /api/event/me ────────────────────────────────────────────────────────
 async function handleGetMyRegistrations(req, res) {
     try {
         const events = await Event.find({ "registrations.user": req.user._id })
@@ -219,7 +214,7 @@ async function handleGetMyRegistrations(req, res) {
     }
 }
 
-// ─── GET /api/event/:eventId/attendees ───────────────────────────────────────
+
 async function handleGetEventAttendees(req, res) {
     try {
         const { eventId } = req.params;

@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
 });
 
 transporter.verify((err) => {
-    if (err) console.error("❌ Email transporter error:", err.message);
-    else console.log("✅ Email transporter ready");
+    if (err) console.error("Email transporter error:", err.message);
+    else console.log("Email transporter ready");
 });
 
 async function sendRegistrationEmail(user, event, qrToken) {

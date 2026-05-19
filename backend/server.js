@@ -3,11 +3,15 @@ require('dotenv').config();
 const express = require('express');
 const {connectDb} = require('./src/config/db')
 
+
+
 const cors = require("cors"); 
 const helmet = require("helmet"); 
 const morgan = require("morgan");
 
 const app = express();
+
+app.set("trust proxy", 1);
 
 connectDb();
 

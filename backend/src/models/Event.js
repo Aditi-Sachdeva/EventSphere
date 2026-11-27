@@ -1,6 +1,5 @@
 
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const registrationSchema = new mongoose.Schema({
     user: {
@@ -14,8 +13,7 @@ const registrationSchema = new mongoose.Schema({
     },
     qrToken: {
         type: String,
-        default: null,
-        sparse: true
+        default: null
     },
     tokenExpiresAt: {
         type: Date,
@@ -35,28 +33,31 @@ const eventSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        trim: true
     },
     description: {
         type: String,
         required: true,
+        trim: true
     },
     club: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Club",
-        required: true,
+        required: true
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true,
+        required: true
     },
     eventDate: {
         type: Date,
-        required: true,
+        required: true
     },
     location: {
         type: String,
         required: true,
+        trim: true
     },
     image: {
         type: String,
@@ -65,20 +66,33 @@ const eventSchema = new mongoose.Schema({
     totalSeats: {
         type: Number,
         required: true,
-        min: 1,
+        min: 1
     },
     availableSeats: {
         type: Number,
         required: true,
-        min: 0,
+        min: 0
     },
     registrations: [registrationSchema],
     status: {
         type: String,
-        enum: ["upcoming", "completed", "cancelled", "approved", "rejected", "pending"],
-        default: "pending",
+        enum: [
+            "pending",
+            "approved",
+            "rejected",
+            "upcoming",
+            "completed",
+            "cancelled"
+        ],
+        default: "pending"
     }
 }, { timestamps: true });
 
+eventSchema.index({ "registrations.qrToken": 1 });
+eventSchema.index({ status: 1, eventDate: 1 });
+eventSchema.index({ club: 1, eventDate: 1 });
+eventSchema.index({ "registrations.user": 1 });
+
 const Event = mongoose.model("Event", eventSchema);
+
 module.exports = Event;

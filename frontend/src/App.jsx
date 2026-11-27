@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -25,13 +25,27 @@ import ClubEvents from "./pages/organizer/ClubEvents";
 import MemberApprovals from "./pages/organizer/MemberApprovals";
 import CreateEvent from "./pages/organizer/CreateEvent";
 
-// 🔐 Protected Route
+// Protected Route
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return <Navigate to="/login" />;
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
-        return <Navigate to="/mainpage" />;
+    let user = null;
+
+    try {
+        user = JSON.parse(localStorage.getItem("user"));
+    } catch {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
     }
+
+    const token = localStorage.getItem("token");
+
+    if (!user || !token) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/mainpage" replace />;
+    }
+
     return children;
 };
 
@@ -50,11 +64,11 @@ export default function App() {
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/clubs/:clubId" element={<ClubDetail />} />
 
-            {/* SCANNER — organizer / admin only */}
+            {/* SCANNER */}
             <Route
                 path="/scan"
                 element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer", "mainOrganizer"]}>
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
                         <ScannerPage />
                     </ProtectedRoute>
                 }
@@ -65,26 +79,29 @@ export default function App() {
                 path="/organizer"
                 element={<Navigate to="/organizer/events" replace />}
             />
+
             <Route
                 path="/organizer/events"
                 element={
-                    <ProtectedRoute allowedRoles={["organizer", "mainOrganizer", "admin"]}>
+                    <ProtectedRoute allowedRoles={["organizer", "admin"]}>
                         <ClubEvents />
                     </ProtectedRoute>
                 }
             />
+
             <Route
                 path="/organizer/approvals"
                 element={
-                    <ProtectedRoute allowedRoles={["organizer", "mainOrganizer", "admin"]}>
+                    <ProtectedRoute allowedRoles={["organizer", "admin"]}>
                         <MemberApprovals />
                     </ProtectedRoute>
                 }
             />
+
             <Route
                 path="/organizer/create"
                 element={
-                    <ProtectedRoute allowedRoles={["organizer", "mainOrganizer", "admin"]}>
+                    <ProtectedRoute allowedRoles={["organizer", "admin"]}>
                         <CreateEvent />
                     </ProtectedRoute>
                 }
